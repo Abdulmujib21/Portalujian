@@ -513,7 +513,12 @@ pre.template{background:#0f2b20;color:#d6f0e0;border-radius:10px;padding:15px;ov
         <button class="btn ghost hide" id="absBtnCamStop" onclick="absStopKamera()">⏹ Hentikan</button>
       </div>
       <div id="absCamWrap" class="hide" style="margin:6px 0"><video id="absVideo" playsinline muted style="width:100%;max-width:420px;border-radius:10px;background:#000"></video></div>
-      <div id="absFeedback" class="nota info">Siap menerima scan… <b>Batas</b> jam tepat waktu: <b id="absBatasTxt">07:15</b> (hanya ambang batas). <b>Jam kehadiran</b> dicatat dari waktu scan/klik yang sebenarnya dan tampil di tiap siswa — lewat batas ditandai <b>⚠ lewat batas</b>.</div>
+      <div class="nota info" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <span id="absJamJalan" style="font-size:22px;font-weight:800;font-variant-numeric:tabular-nums;color:#0b6b3a;letter-spacing:.5px">--:--:--</span>
+        <span class="muted" style="font-size:12px">jam berjalan</span>
+        <span style="margin-left:auto;font-size:12.5px">Batas tepat waktu: <b id="absBatasTxt">07:15</b></span>
+      </div>
+      <div id="absFeedback" class="nota info">Jam kehadiran = <b>waktu scan/klik sebenarnya</b>. Aturan: jam kehadiran <b>≤ batas</b> → <b>tepat waktu</b>; jam kehadiran <b>&gt; batas</b> → <b>terlambat</b>.</div>
       <div id="absRingkas" class="abs-ringkas"></div>
       <div class="btn-row" style="margin:10px 0">
         <button class="btn ghost" onclick="absSisaAlpa()">⚠️ Tandai Sisa Alpa</button>
@@ -2302,7 +2307,7 @@ function tabGuru(n){
   Object.keys(peta).forEach(k=>document.getElementById(peta[k]).classList.toggle('hide',k!==n));
   if(n==='paket') gambarPaket();
   if(n==='hasil'){ gambarFilter(); gambarHasil(); gambarPeserta(); }
-  if(n==='absensi'){ absGambar(); absInitRekap(); absIsiDariAbsensi(); }
+  if(n==='absensi'){ absGambar(); absInitRekap(); absIsiDariAbsensi(); absJamMulai(); }
   if(n==='setting') isiSetting();
 }
 
@@ -4312,6 +4317,11 @@ let absScanTerakhir='', absScanWaktu=0;
 
 function absKey(d){ d=d||new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
 function absJam(d){ d=d||new Date(); return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')+':'+String(d.getSeconds()).padStart(2,'0'); }
+/* Jam berjalan (live) di tab Absensi */
+let absJamTimer=null;
+function absJamDetik(){ const el=document.getElementById('absJamJalan'); if(el) el.textContent=absJam(); }
+function absJamMulai(){ absJamDetik(); if(absJamTimer) clearInterval(absJamTimer); absJamTimer=setInterval(absJamDetik,1000); }
+setTimeout(function(){ try{ absJamMulai(); }catch(e){} },400);
 function absTanggalIndo(key){
   const p=String(key||'').split('-'); if(p.length!==3) return key||'';
   const nama=['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
@@ -4449,8 +4459,8 @@ function absGambar(){
         const badge=st?'<span class="abs-badge" style="background:'+ABS_WARNA[st]+'">'+ABS_LABEL[st]+'</span>':'<span class="abs-badge kosong">belum</span>';
         const lewat=r?((st==='T')||absLewatBatas(r.t)):false;
         const jam=r?('<span class="abs-row-jam">⏱ '+esc(String(r.t||'').slice(0,5))+'</span>'
-          +(lewat?'<span class="abs-row-jam" style="color:#b45309">⚠ lewat batas</span>'
-                 :'<span class="abs-row-jam" style="color:#15803d">tepat waktu</span>')):'';
+          +(lewat?'<span class="abs-row-jam" style="color:#b45309">terlambat (&gt; '+esc(absBatas())+')</span>'
+                 :'<span class="abs-row-jam" style="color:#15803d">tepat waktu (≤ '+esc(absBatas())+')</span>')):'';
         const tb=ABS_URUT.map(x=>'<button class="abs-btn'+(st===x?' on':'')+'" style="'+(st===x?'background:'+ABS_WARNA[x]:'')+'" title="'+ABS_LABEL[x]+'" onclick="absUbah(\''+s.nis+'\',\''+x+'\')">'+x+'</button>').join('');
         return '<div class="abs-row">'
           +'<div class="abs-row-no">'+(i+1)+'</div>'
