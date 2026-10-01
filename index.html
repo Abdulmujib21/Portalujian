@@ -596,7 +596,7 @@ pre.template{background:#0f2b20;color:#d6f0e0;border-radius:10px;padding:15px;ov
       <h2>Identitas Madrasah (Madrasah/Sekolah)</h2>
       <div class="grid2 baris">
         <div><label>Nama Madrasah/Sekolah</label><input id="sNama" class="inp" placeholder="Nama madrasah/sekolah Anda"></div>
-        <div><label>Tahun Ajaran</label><input id="sTahun" class="inp" placeholder="2025/2026"></div>
+        <div><label>Tahun Ajaran</label><input id="sTahun" class="inp" placeholder="2026/2027"></div>
       </div>
       <div class="baris"><label>Logo Madrasah/Sekolah</label>
         <input type="file" id="sLogo" accept="image/*" class="inp">
@@ -806,7 +806,7 @@ MAPEL: Fiqih
 KELAS: V
 JENIS: UTS
 SEMESTER: Ganjil
-TAHUN AJARAN: 2025/2026
+TAHUN AJARAN: 2026/2027
 WAKTU: 60
 PERCOBAAN: 2
 
@@ -924,10 +924,17 @@ const LOGO_BAWAAN='';  /* logo bawaan dihapus: portal mulai TANPA logo */
    Bisa diganti kapan saja di Pengaturan > Portal Online. */
 const GUDANG_BAWAAN='https://script.google.com/macros/s/AKfycby-PMq_70criosIXUIB464dEx0y0Io6eEeXurt3MagE3ccbFD9WgPv9yOJAhp7UuetD/exec';
 
+/* Tahun ajaran otomatis mengikuti kalender madrasah:
+   mulai Juli ke atas dianggap tahun ajaran baru (mis. Okt 2026 -> 2026/2027). */
+function taDefault(){
+  const d=new Date(); const y=d.getFullYear();
+  return (d.getMonth()>=6)? (y+'/'+(y+1)) : ((y-1)+'/'+y);
+}
+
 function kosongDB(){
   return {
     settings:{
-      nama:'', tahun:'2025/2026', semester:'Ganjil', pin:'1234', logo:'',
+      nama:'', tahun:taDefault(), semester:'Ganjil', pin:'1234', logo:'',
       maksPercobaan:1, acakSoal:false, acakOpsi:false, tampilNilai:true,
       tampilPembahasan:false, wajibNIS:false, antiNyontek:true,
       caraNilai:'soal', pembulatan:'lima', backendUrl:GUDANG_BAWAAN,
@@ -1327,6 +1334,10 @@ function salinKodeAktivasi(){
 }
 function terapkanIdentitas(){
   const s=DB.settings;
+  /* Tahun ajaran: bila masih tersimpan nilai bawaan lama 2025/2026,
+     perbarui sekali ke tahun ajaran berjalan. */
+  if(s.tahun==='2025/2026' && !s.taMigrasi){ s.tahun=taDefault(); s.taMigrasi=true; simpan(); }
+  const pt=document.getElementById('sTahun'); if(pt) pt.placeholder=taDefault();
   try{ document.title='Portal Ujian CBT'+(s.nama?' — '+s.nama:' — Nama Sekolah Anda'); }catch(e){}
   document.getElementById('namaMadrasah').textContent=s.nama||'Nama Sekolah Anda';
   const box=document.getElementById('logoBox');
@@ -3210,7 +3221,7 @@ function unduhPanduanTemplate(){
 '     KELAS: V',
 '     JENIS: UTS',
 '     SEMESTER: Ganjil',
-'     TAHUN AJARAN: 2025/2026',
+'     TAHUN AJARAN: 2026/2027',
 '     WAKTU: 60',
 '     PERCOBAAN: 2',
 '     GURU: ',
