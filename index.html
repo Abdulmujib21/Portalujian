@@ -529,6 +529,18 @@ pre.template{background:#0f2b20;color:#d6f0e0;border-radius:10px;padding:15px;ov
     </div>
 
     <div class="card">
+      <h2>📋 Daftar Siswa — sumber nama di absensi</h2>
+      <p class="muted" style="margin-bottom:9px">Tempel daftar siswa di sini, satu siswa satu baris dengan format <b>NIS;NAMA;KELAS</b>. Setelah menekan <b>💾 Simpan Daftar Siswa</b>, nama siswa <b>langsung tampil</b> di daftar absensi di atas.</p>
+      <textarea id="absDaftarNIS" class="inp" rows="5" placeholder="1001;Ahmad Fauzi;V&#10;1002;Budi Santoso;V&#10;1003;Siti Aminah;VI" style="width:100%;font-family:ui-monospace,monospace"></textarea>
+      <div class="btn-row" style="margin-top:8px">
+        <button class="btn" onclick="absSimpanDaftarSiswa()">💾 Simpan Daftar Siswa</button>
+        <button class="btn ghost" onclick="absIsiDariAbsensi()">⤵️ Muat Daftar Tersimpan</button>
+        <button class="btn ghost" onclick="tabGuru('setting')">⚙️ Impor dari Berkas (Pengaturan)</button>
+      </div>
+      <div id="absHasilSiswa" class="nota info" style="margin-top:9px">Daftar ini <b>sama</b> dengan <b>Pengaturan → Daftar Siswa &amp; NIS</b>. Tekan <b>⤵️ Muat Daftar Tersimpan</b> untuk menampilkan daftar yang sudah ada.</div>
+    </div>
+
+    <div class="card">
       <h2>📈 Rekap Kehadiran</h2>
       <p class="muted" style="margin-bottom:11px">Rekap untuk kelas yang dipilih di atas, pada rentang tanggal berikut.</p>
       <div class="grid3 baris">
@@ -2290,7 +2302,7 @@ function tabGuru(n){
   Object.keys(peta).forEach(k=>document.getElementById(peta[k]).classList.toggle('hide',k!==n));
   if(n==='paket') gambarPaket();
   if(n==='hasil'){ gambarFilter(); gambarHasil(); gambarPeserta(); }
-  if(n==='absensi'){ absGambar(); absInitRekap(); }
+  if(n==='absensi'){ absGambar(); absInitRekap(); absIsiDariAbsensi(); }
   if(n==='setting') isiSetting();
 }
 
@@ -3153,6 +3165,7 @@ async function imporDaftarSiswa(file){
       document.getElementById('sDaftarNIS').value=arr.map(s=>s.nis+';'+s.nama+';'+s.kelas).join('\n');
       w.innerHTML='<div class="nota ok">✅ <b>'+arr.length+' siswa</b> tersimpan sebagai daftar resmi.</div>';
       gambarTabelSiswa();
+      try{ absGambar(); absIsiDariAbsensi(); }catch(e){}
       toast(arr.length+' siswa disimpan','ok');
     };
     document.getElementById('btnBatalDaftarSiswa').onclick=function(){ w.innerHTML=''; };
@@ -4318,6 +4331,9 @@ function absEntry(tgl,tanpaBuat){
 function absSiswaKelas(kelas){
   const k=normalKelas(kelas||'');
   if(!k) return DB.siswa.slice();
+  /* Bila SELURUH daftar siswa belum punya kolom kelas, jangan disaring —
+     semua siswa tetap tampil pada kelas mana pun yang sedang dipilih. */
+  if(DB.siswa.length && !DB.siswa.some(s=>normalKelas(s.kelas))) return DB.siswa.slice();
   return DB.siswa.filter(s=>normalKelas(s.kelas)===k);
 }
 function absCariSiswa(kode){
@@ -4397,7 +4413,11 @@ function absGambar(){
   const daftar=absKelasTersedia();
   const sel=document.getElementById('absKelas');
   if(sel){
-    if(!absKelas||daftar.indexOf(absKelas)<0) absKelas=daftar[0]||'';
+    /* Pilih kelas yang BENAR-BENAR berisi siswa. Bila kelas terpilih tidak
+       punya siswa (mis. kelas guru beda dengan kelas siswa), pindah otomatis
+       ke kelas yang ada siswanya — daftar siswa langsung tampil setelah impor. */
+    const berisi=daftar.filter(k=>absSiswaKelas(k).length>0);
+    if(!absKelas||daftar.indexOf(absKelas)<0||(absSiswaKelas(absKelas).length===0&&berisi.length)) absKelas=berisi[0]||daftar[0]||'';
     sel.innerHTML=daftar.length?daftar.map(k=>'<option value="'+esc(k)+'"'+(k===absKelas?' selected':'')+'>Kelas '+esc(k)+'</option>').join(''):'<option value="">(kelas belum diisi)</option>';
     if(absKelas) sel.value=absKelas;
   }
@@ -4408,7 +4428,7 @@ function absGambar(){
   const ent=absEntry(absTanggal,true);
   const js=document.getElementById('absJumlahSiswa');
   if(js) js.textContent = DB.siswa.length
-    ? ('Kelas '+absKelas+' · '+siswa.length+' siswa ditampilkan dari '+DB.siswa.length+' siswa terdaftar')
+    ? ((DB.siswa.some(s=>normalKelas(s.kelas))?'Kelas '+esc(absKelas):'Semua kelas')+' · '+siswa.length+' siswa ditampilkan dari '+DB.siswa.length+' siswa terdaftar')
     : 'Belum ada data siswa tersimpan';
   const w=document.getElementById('absDaftar');
   if(w){
@@ -4457,6 +4477,31 @@ function absKosongHari(){
 }
 function absGantiTanggal(v){ absTanggal=v||absKey(); absGambar(); }
 function absGantiKelas(v){ absKelas=v||''; absGambar(); absGambarKartu(); }
+/* Kotak daftar siswa di dalam tab Absensi — sumber nama yang sama dengan
+   Pengaturan > Daftar Siswa & NIS. Simpan di sini = langsung tampil di absensi. */
+function absIsiDariAbsensi(){
+  const t=document.getElementById('absDaftarNIS'); if(!t) return;
+  t.value=DB.siswa.map(s=>s.nis+';'+s.nama+';'+s.kelas).join('\n');
+  const w=document.getElementById('absHasilSiswa');
+  if(w) w.innerHTML = DB.siswa.length
+    ? ('<div class="nota ok">✅ <b>'+DB.siswa.length+' siswa</b> tersimpan dimuat ke kotak di atas.</div>')
+    : '<div class="nota ingat">Belum ada daftar siswa tersimpan di perangkat ini. Tempel daftar pada kotak di atas lalu tekan <b>💾 Simpan Daftar Siswa</b>.</div>';
+}
+function absSimpanDaftarSiswa(){
+  const t=document.getElementById('absDaftarNIS'); if(!t) return;
+  const arr=uraiBarisSiswa(t.value.split(/\r?\n/));
+  const w=document.getElementById('absHasilSiswa');
+  if(!arr.length){
+    if(w) w.innerHTML='<div class="nota bahaya">⚠️ Tidak ada baris siswa yang terbaca. Pastikan formatnya <b>NIS;NAMA;KELAS</b> — satu siswa satu baris.</div>';
+    return;
+  }
+  DB.siswa=arr; simpan();
+  const p=document.getElementById('sDaftarNIS'); if(p) p.value=arr.map(s=>s.nis+';'+s.nama+';'+s.kelas).join('\n');
+  try{ gambarTabelSiswa(); }catch(e){}
+  if(w) w.innerHTML='<div class="nota ok">✅ <b>'+arr.length+' siswa</b> tersimpan. Daftar absensi di atas sudah diperbarui.</div>';
+  absGambar();
+  toast(arr.length+' siswa disimpan','ok');
+}
 function absSimpanBatas(){ const el=document.getElementById('absBatas'); DB.settings.absensiBatas=(el&&el.value)||'07:15'; simpan(); absGambar(); toast('Batas jam tepat waktu: '+DB.settings.absensiBatas,'ok'); }
 
 /* ---------- rekap ---------- */
