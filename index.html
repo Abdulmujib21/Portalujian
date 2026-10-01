@@ -34,13 +34,23 @@ a{color:var(--hijau2)}
 .hide{display:none !important}
 
 /* ---------- BUTTONS ---------- */
-.btn{display:inline-flex;align-items:center;gap:7px;background:var(--hijau);color:#fff;border:none;border-radius:10px;padding:10px 17px;font-weight:600;cursor:pointer;transition:.15s;font-size:14.5px}
-.btn:hover{background:var(--hijau2);transform:translateY(-1px)}
-.btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
-.btn.ghost{background:#fff;color:var(--hijau);border:1.5px solid var(--hijau)}
-.btn.ghost:hover{background:var(--hijau-muda)}
-.btn.abu{background:#64748b}.btn.abu:hover{background:#516074}
-.btn.merah{background:var(--merah)}.btn.merah:hover{background:#a5301f}
+.btn{display:inline-flex;align-items:center;gap:7px;background:linear-gradient(180deg,var(--hijau2),var(--hijau));color:#fff;border:none;border-radius:10px;padding:10px 17px;font-weight:600;cursor:pointer;font-size:14.5px;
+  -webkit-tap-highlight-color:transparent;user-select:none;
+  box-shadow:0 1px 2px rgba(16,40,30,.10), 0 2px 6px rgba(11,107,58,.18);
+  transition:transform .15s ease, box-shadow .2s ease, background .2s ease}
+.btn:hover{background:linear-gradient(180deg,var(--hijau),var(--hijau2));transform:translateY(-1px);
+  box-shadow:0 4px 12px rgba(11,107,58,.26), 0 1px 2px rgba(16,40,30,.10)}
+.btn:active{transform:translateY(0);box-shadow:inset 0 2px 5px rgba(0,0,0,.20)}
+.btn:focus-visible{outline:2px solid var(--hijau2);outline-offset:2px}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none;box-shadow:none}
+.btn.ghost{background:linear-gradient(180deg,#ffffff,#f5faf7);color:var(--hijau);border:1.5px solid var(--hijau);
+  box-shadow:0 1px 2px rgba(16,40,30,.08), 0 1px 4px rgba(11,107,58,.08)}
+.btn.ghost:hover{background:linear-gradient(180deg,#ffffff,#e8f6ee);
+  box-shadow:0 4px 12px rgba(11,107,58,.16), 0 1px 2px rgba(16,40,30,.08)}
+.btn.abu{background:linear-gradient(180deg,#748196,#64748b);box-shadow:0 1px 2px rgba(16,40,30,.10),0 2px 6px rgba(71,85,105,.20)}
+.btn.abu:hover{background:linear-gradient(180deg,#64748b,#516074)}
+.btn.merah{background:linear-gradient(180deg,#cf4436,var(--merah));box-shadow:0 1px 2px rgba(16,40,30,.10),0 2px 6px rgba(192,57,43,.20)}
+.btn.merah:hover{background:linear-gradient(180deg,var(--merah),#a5301f)}
 .btn.kecil{padding:6px 11px;font-size:13px;border-radius:8px}
 .btn.besar{padding:15px 30px;font-size:16.5px;border-radius:12px}
 .btn.blok{display:flex;width:100%;justify-content:center}
@@ -54,7 +64,8 @@ label{display:block;font-size:13px;font-weight:600;margin-bottom:5px;color:#2c4a
 .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:13px}
 @media(max-width:680px){.grid2,.grid3{grid-template-columns:1fr}}
 .baris{margin-bottom:13px}
-.pil{display:flex;align-items:center;gap:9px;padding:9px 12px;border:1.5px solid var(--garis);border-radius:9px;cursor:pointer;margin-bottom:7px;background:#fff}
+.pil{display:flex;align-items:center;gap:9px;padding:9px 12px;border:1.5px solid var(--garis);border-radius:9px;cursor:pointer;margin-bottom:7px;background:#fff;
+  box-shadow:0 1px 2px rgba(16,40,30,.05);transition:box-shadow .18s ease,border-color .18s ease,background .18s ease}
 .pil:hover{border-color:var(--hijau2);background:var(--hijau-muda)}
 .pil input{width:auto;accent-color:var(--hijau)}
 
@@ -62,17 +73,40 @@ label{display:block;font-size:13px;font-weight:600;margin-bottom:5px;color:#2c4a
 .hero{background:linear-gradient(135deg,var(--hijau),var(--hijau2));border-radius:16px;padding:34px 26px;color:#fff;text-align:center;margin-bottom:20px}
 .hero h2{color:#fff;font-size:25px;margin-bottom:8px}
 .hero p{opacity:.92;max-width:620px;margin:0 auto;font-size:14.5px}
-.pintu{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-@media(max-width:680px){.pintu{grid-template-columns:1fr}}
-.pintu .card{margin:0;text-align:center;padding:28px 22px;cursor:pointer;transition:.18s;border:2px solid transparent}
+.pintu{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:22px}
+@media(max-width:680px){.pintu{grid-template-columns:1fr;gap:14px;margin-bottom:20px}}
+.pintu .card{margin:0;text-align:center;padding:28px 22px;cursor:pointer;transition:.18s;border:2px solid transparent;
+  box-shadow:0 1px 3px rgba(16,40,30,.07), 0 2px 8px rgba(11,107,58,.05)}
 .pintu .card:hover{border-color:var(--hijau2);transform:translateY(-3px);box-shadow:0 8px 24px rgba(11,107,58,.13)}
 .pintu .ikon{font-size:40px;margin-bottom:8px}
 
-/* ---------- TABS ---------- */
-.tabs{display:flex;gap:6px;flex-wrap:wrap;border-bottom:2px solid var(--garis);margin-bottom:18px}
-.tab{padding:10px 16px;border:none;background:none;cursor:pointer;font-weight:600;color:var(--abu);border-bottom:3px solid transparent;margin-bottom:-2px;font-size:14.5px}
-.tab.aktif{color:var(--hijau);border-bottom-color:var(--hijau)}
-.tab:hover{color:var(--hijau2)}
+/* ---------- TABS (tombol panel guru) ---------- */
+.tabs{display:flex;gap:8px;flex-wrap:wrap;align-items:center;
+  padding:7px;margin-bottom:20px;border:1px solid var(--garis);border-radius:15px;
+  background:linear-gradient(180deg,#f8fbf9,#eef4f1);
+  box-shadow:0 1px 3px rgba(16,40,30,.05), inset 0 1px 0 rgba(255,255,255,.85)}
+.tab{position:relative;padding:10px 18px;font-size:14px;font-weight:600;letter-spacing:.15px;
+  color:#436356;cursor:pointer;border:1px solid var(--garis);border-radius:11px;
+  background:linear-gradient(180deg,#ffffff,#f3f8f5);
+  box-shadow:0 1px 2px rgba(16,40,30,.07), 0 1px 1px rgba(16,40,30,.04);
+  -webkit-tap-highlight-color:transparent;user-select:none;
+  transition:transform .16s ease, box-shadow .22s ease, color .18s ease, background .22s ease, border-color .18s ease}
+.tab:hover{color:var(--hijau);border-color:#bfe0cd;
+  background:linear-gradient(180deg,#ffffff,#e9f6ee);
+  box-shadow:0 5px 14px rgba(11,107,58,.14), 0 1px 2px rgba(16,40,30,.06);
+  transform:translateY(-1px)}
+.tab:active{transform:translateY(0);box-shadow:inset 0 2px 5px rgba(16,40,30,.13)}
+.tab:focus-visible{outline:2px solid var(--hijau2);outline-offset:2px}
+.tab.aktif{color:#fff;border-color:transparent;
+  background:linear-gradient(135deg,var(--hijau),var(--hijau2));
+  box-shadow:0 5px 15px rgba(11,107,58,.30), 0 1px 2px rgba(11,107,58,.28), inset 0 1px 0 rgba(255,255,255,.22)}
+.tab.aktif:hover{color:#fff;transform:translateY(-1px);
+  background:linear-gradient(135deg,var(--hijau2),var(--hijau));
+  box-shadow:0 7px 18px rgba(11,107,58,.34), 0 1px 2px rgba(11,107,58,.28), inset 0 1px 0 rgba(255,255,255,.22)}
+@media (max-width:560px){
+  .tabs{gap:6px;border-radius:13px}
+  .tab{padding:9px 13px;font-size:13px}
+}
 
 /* ---------- TABEL ---------- */
 .tabel{width:100%;border-collapse:collapse;font-size:13.5px}
@@ -207,12 +241,27 @@ table.lap td.nilai{font-weight:800;text-align:center;font-size:13px}
 .nota.ingat{background:#fdf3d3;border-color:var(--emas)}
 .nota.bahaya{background:#fbe9e7;border-color:var(--merah)}
 .score-big{font-size:56px;font-weight:800;color:var(--hijau);line-height:1}
-.drop{border:2.5px dashed var(--hijau2);border-radius:13px;padding:26px;text-align:center;background:var(--hijau-muda);cursor:pointer}
+.drop{border:2.5px dashed var(--hijau2);border-radius:13px;padding:26px;text-align:center;background:var(--hijau-muda);cursor:pointer;
+  box-shadow:0 1px 3px rgba(16,40,30,.05), inset 0 1px 0 rgba(255,255,255,.6);transition:background .18s ease,box-shadow .2s ease}
 .drop:hover{background:#d9efe3}
 pre.template{background:#0f2b20;color:#d6f0e0;border-radius:10px;padding:15px;overflow-x:auto;font-size:12.5px;line-height:1.6;font-family:'Consolas',monospace}
 .toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(120px);background:#14342a;color:#fff;padding:13px 22px;border-radius:11px;font-size:14px;z-index:999;transition:.3s;box-shadow:0 8px 26px rgba(0,0,0,.28);max-width:90vw}
 .toast.tampil{transform:translateX(-50%) translateY(0)}
 .toast.err{background:var(--merah)}.toast.ok{background:var(--hijau)}
+
+/* ---------- ABSENSI (lokal) ---------- */
+.abs-ringkas{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.abs-kotak{border:2px solid #94a3b8;border-radius:10px;padding:6px 12px;min-width:74px;text-align:center;background:#fff}
+.abs-kotak b{display:block;font-size:20px;line-height:1.1}
+.abs-kotak span{font-size:11px;color:var(--abu)}
+.abs-kartu-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.abs-kartu{border:1px solid var(--garis);border-radius:9px;padding:9px;background:#fff;break-inside:avoid}
+.abs-kartu-nm{font-weight:800;font-size:13px}
+.abs-kartu-sub{font-size:11px;color:var(--abu)}
+.abs-barcode{margin:5px 0;overflow:hidden}
+.abs-barcode svg{width:100%;height:13mm;display:block}
+.abs-kartu-kode{font-size:11px;letter-spacing:1.5px;text-align:center}
+@media print{ #kertasKustom svg{max-width:100%;height:auto} }
 </style>
 </head>
 <body>
@@ -308,6 +357,7 @@ pre.template{background:#0f2b20;color:#d6f0e0;border-radius:10px;padding:15px;ov
     <button class="tab aktif" data-tab="soal" onclick="tabGuru('soal')">📄 Bank Soal</button>
     <button class="tab" data-tab="paket" onclick="tabGuru('paket')">📚 Paket Ujian</button>
     <button class="tab" data-tab="hasil" onclick="tabGuru('hasil')">📊 Hasil &amp; Nilai</button>
+    <button class="tab" data-tab="absensi" onclick="tabGuru('absensi')">🖐️ Absensi</button>
     <button class="tab" data-tab="setting" onclick="tabGuru('setting')">⚙️ Pengaturan</button>
     <button class="tab" data-tab="panduan" onclick="tabGuru('panduan')">📖 Panduan</button>
   </div>
@@ -317,6 +367,10 @@ pre.template{background:#0f2b20;color:#d6f0e0;border-radius:10px;padding:15px;ov
     <div class="card">
       <h2>Impor Soal Otomatis — MS Word (.docx) &amp; PDF</h2>
       <p class="muted" style="margin-bottom:13px">Satu berkas untuk <b>seluruh</b> soal. Sistem memecah sendiri setiap soal beserta opsi, kunci, dan bobotnya — guru tidak perlu memasukkan soal satu per satu. Pilihan ganda, isian, essay, dan uraian boleh dicampur dalam satu dokumen.</p>
+      <div class="btn-row" style="margin-bottom:12px">
+        <button class="btn" onclick="unduhTemplateSoal()">⬇️ Template Soal (.docx)</button>
+        <button class="btn ghost" onclick="unduhPanduanTemplate()">⬇️ Petunjuk Format (.txt)</button>
+      </div>
       <div class="drop" id="dropWord" onclick="document.getElementById('fileSoal').click()">
         <div style="font-size:34px">📥</div>
         <b>Klik atau tarik berkas .docx / .pdf ke sini</b>
@@ -408,6 +462,61 @@ pre.template{background:#0f2b20;color:#d6f0e0;border-radius:10px;padding:15px;ov
     <div class="card hide" id="koreksiBox">
       <h2>✍️ Koreksi Jawaban Essay</h2>
       <div id="isiKoreksi"></div>
+    </div>
+  </div>
+
+  <!-- ---- TAB ABSENSI ---- -->
+  <div class="tabisi hide" id="tabAbsensi">
+    <div class="card">
+      <h2>🖐️ Absensi Harian — Scan Barcode</h2>
+      <p class="muted" style="margin-bottom:11px">Data absensi disimpan <b>di HP ini saja</b> — tanpa internet dan tanpa gudang. Untuk memindahkan ke HP lain, pakai <b>Pengaturan → Cadangkan &amp; Pulihkan Data</b>.</p>
+      <div class="grid3 baris">
+        <div><label>Tanggal</label><input type="date" id="absTanggal" class="inp" onchange="absGantiTanggal(this.value)"></div>
+        <div><label>Kelas</label><select id="absKelas" class="inp" onchange="absGantiKelas(this.value)"></select></div>
+        <div><label>Batas Jam Tepat Waktu</label>
+          <div style="display:flex;gap:6px"><input type="time" id="absBatas" class="inp" style="flex:1"><button class="btn" onclick="absSimpanBatas()">Simpan</button></div>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:4px 0 8px">
+        <input id="absScan" class="inp" style="flex:1;min-width:220px;font-size:16px" placeholder="Scan barcode / ketik NIS lalu Enter…" autocomplete="off" onkeydown="if(event.key==='Enter'){event.preventDefault();absScanManual();}">
+        <button class="btn" onclick="absScanManual()">✓ Catat</button>
+        <button class="btn ghost" id="absBtnCam" onclick="absMulaiKamera()">📷 Kamera</button>
+        <button class="btn ghost hide" id="absBtnCamStop" onclick="absStopKamera()">⏹ Hentikan</button>
+      </div>
+      <div id="absCamWrap" class="hide" style="margin:6px 0"><video id="absVideo" playsinline muted style="width:100%;max-width:420px;border-radius:10px;background:#000"></video></div>
+      <div id="absFeedback" class="nota info">Siap menerima scan… Batas tepat waktu <b id="absBatasTxt">07:15</b>. Lewat jam itu otomatis tercatat <b>Terlambat</b>.</div>
+      <div id="absRingkas" class="abs-ringkas"></div>
+      <div class="btn-row" style="margin:10px 0">
+        <button class="btn ghost" onclick="absSemuaHadir()">✅ Semua Hadir</button>
+        <button class="btn ghost" onclick="absSisaAlpa()">⚠️ Tandai Sisa Alpa</button>
+        <button class="btn ghost" onclick="absKosongHari()">↺ Kosongkan Hari Ini</button>
+        <button class="btn ghost" onclick="absEksporCSV()">⬇️ Unduh CSV</button>
+        <button class="btn ghost" onclick="absCetakHarian()">🖨️ Cetak</button>
+      </div>
+      <h3 id="absTglLabel"></h3>
+      <div id="absDaftar"></div>
+    </div>
+
+    <div class="card">
+      <h2>📈 Rekap Kehadiran</h2>
+      <p class="muted" style="margin-bottom:11px">Rekap untuk kelas yang dipilih di atas, pada rentang tanggal berikut.</p>
+      <div class="grid3 baris">
+        <div><label>Dari Tanggal</label><input type="date" id="absRekapDari" class="inp"></div>
+        <div><label>Sampai Tanggal</label><input type="date" id="absRekapSampai" class="inp"></div>
+        <div><label>&nbsp;</label><button class="btn" onclick="absGambarRekap()">🔎 Tampilkan Rekap</button></div>
+      </div>
+      <div id="absRekapArea"></div>
+    </div>
+
+    <div class="card">
+      <h2>🏷️ Kartu Barcode Siswa</h2>
+      <p class="muted" style="margin-bottom:10px">Kartu kehadiran berisi barcode <b>Code39</b> dari NIS. Cetak atau unduh, lalu bagikan ke siswa untuk di-scan saat presensi.</p>
+      <div class="btn-row" style="margin-bottom:10px">
+        <button class="btn" onclick="absGambarKartu()">🔄 Buat / Segarkan Kartu</button>
+        <button class="btn ghost" onclick="absCetakKartu()">🖨️ Cetak Kartu</button>
+        <button class="btn ghost" onclick="absUnduhKartuHTML()">⬇️ Unduh HTML Kartu</button>
+      </div>
+      <div id="absKartuArea"></div>
     </div>
   </div>
 
@@ -546,6 +655,17 @@ pre.template{background:#0f2b20;color:#d6f0e0;border-radius:10px;padding:15px;ov
 
   <!-- ---- TAB PANDUAN ---- -->
   <div class="tabisi hide" id="tabPanduan">
+    <div class="card" style="border:2px solid var(--emas)">
+      <h2>📥 Format Template — Download</h2>
+      <p class="muted" style="margin-bottom:11px">Unduh berkas contoh berikut, isi sesuai petunjuk, lalu impor kembali ke portal. Semua berkas bisa dibuka tanpa internet.</p>
+      <div class="btn-row">
+        <button class="btn" onclick="unduhTemplateSoal()">⬇️ Template Soal (.docx)</button>
+        <button class="btn" onclick="unduhTemplateSiswa()">⬇️ Template Data Siswa (.csv)</button>
+        <button class="btn ghost" onclick="unduhPanduanTemplate()">⬇️ Petunjuk Format (.txt)</button>
+      </div>
+      <div class="nota ingat" style="margin-top:12px"><b>Cara pakai:</b> unduh <b>Template Soal (.docx)</b> → tulis soal di MS Word → simpan sebagai .docx → buka tab <b>Bank Soal</b> → tarik berkasnya. Untuk siswa: unduh <b>Template Data Siswa (.csv)</b> → isi di Excel → simpan sebagai .xlsx/.csv → buka tab <b>Pengaturan → Impor daftar siswa</b>.</div>
+    </div>
+
     <div class="card" style="border:2px solid var(--hijau2)">
       <h2>☁️ Portal Online — Link Ujian &amp; Gudang Google</h2>
       <p class="muted" style="margin-bottom:10px">Cara baru: siswa cukup menerima <b>link</b> dari guru, klik, isi <b>nama &amp; NIS</b>, lalu mengerjakan. Tidak ada lagi layar NPSN/kode untuk siswa.</p>
@@ -577,7 +697,7 @@ pre.template{background:#0f2b20;color:#d6f0e0;border-radius:10px;padding:15px;ov
       <h2>Panduan Singkat untuk Guru</h2>
       <h3>1. Menyiapkan soal — satu berkas untuk semua soal</h3>
       <ol style="margin-left:19px">
-        <li>Unduh template baku (<b>Template_Soal_CBT_MI_AZ-ZAHRO.docx</b>).</li>
+        <li>Unduh template baku lewat tombol <b>⬇️ Template Soal (.docx)</b> pada kartu <b>Format Template — Download</b> di bagian paling atas tab ini.</li>
         <li>Tulis <b>semua</b> soal dalam satu dokumen. Pilihan ganda, isian singkat, essay, dan uraian boleh dicampur bebas.</li>
         <li>Jangan mengubah kata penanda: <b>SOAL:</b>, <b>A.</b>, <b>JAWABAN:</b>, <b>TIPE:</b>, <b>KUNCI:</b>, <b>BOBOT:</b>.</li>
         <li>Simpan sebagai <b>.docx</b> (disarankan) atau <b>.pdf</b>. Jangan pakai format .doc lama.</li>
@@ -757,9 +877,10 @@ function kosongDB(){
       nama:'MI AZ-ZAHRO', tahun:'2025/2026', semester:'Ganjil', pin:'1234', logo:'',
       maksPercobaan:1, acakSoal:false, acakOpsi:false, tampilNilai:true,
       tampilPembahasan:false, wajibNIS:false, antiNyontek:true,
-      caraNilai:'soal', pembulatan:'lima', backendUrl:GUDANG_BAWAAN
+      caraNilai:'soal', pembulatan:'lima', backendUrl:GUDANG_BAWAAN,
+      absensiBatas:'07:15'
     },
-    exams:[], results:[], siswa:[], guruMapel:[],
+    exams:[], results:[], siswa:[], guruMapel:[], absensi:{},
     guru:{ nama:'', gelar:'', kelas:[], lengkap:false }
   };
 }
@@ -2128,10 +2249,11 @@ document.getElementById('inpPin').addEventListener('keydown',e=>{ if(e.key==='En
 
 function tabGuru(n){
   document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('aktif',t.dataset.tab===n));
-  const peta={soal:'tabSoal',paket:'tabPaket',hasil:'tabHasil',setting:'tabSetting',panduan:'tabPanduan'};
+  const peta={soal:'tabSoal',paket:'tabPaket',hasil:'tabHasil',absensi:'tabAbsensi',setting:'tabSetting',panduan:'tabPanduan'};
   Object.keys(peta).forEach(k=>document.getElementById(peta[k]).classList.toggle('hide',k!==n));
   if(n==='paket') gambarPaket();
   if(n==='hasil'){ gambarFilter(); gambarHasil(); gambarPeserta(); }
+  if(n==='absensi'){ absGambar(); absInitRekap(); }
   if(n==='setting') isiSetting();
 }
 
@@ -2993,6 +3115,87 @@ async function imporDaftarSiswa(file){
     };
     document.getElementById('btnBatalDaftarSiswa').onclick=function(){ w.innerHTML=''; };
   }catch(err){ w.innerHTML='<div class="nota bahaya">❌ '+esc(err.message)+'</div>'; }
+}
+/* Template Soal (.docx) ditanam sebagai base64 agar bisa diunduh tanpa internet */
+const TPL_SOAL_B64='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';
+function unduhTemplateSoal(){
+  try{
+    const bin=atob(TPL_SOAL_B64);
+    const u8=new Uint8Array(bin.length);
+    for(let i=0;i<bin.length;i++) u8[i]=bin.charCodeAt(i);
+    const b=new Blob([u8],{type:'application/vnd.openxmlformats-officedocument.wordprocessingml.document'});
+    const a=document.createElement('a'); a.href=URL.createObjectURL(b);
+    a.download='Template_Soal_CBT_MI_AZ-ZAHRO.docx'; a.click();
+    toast('Template soal diunduh','ok');
+  }catch(e){ toast('Gagal mengunduh template: '+e.message,'err'); }
+}
+function unduhPanduanTemplate(){
+  const t=[
+'PETUNJUK FORMAT BERKAS — PORTAL CBT MI AZ-ZAHRO',
+'=================================================',
+'',
+'A. TEMPLATE SOAL  (impor di tab Bank Soal)',
+'   Berkas: .docx (disarankan) atau .pdf',
+'   Tulis SEMUA soal dalam satu berkas. Penanda yang tidak boleh diubah:',
+'     SOAL:        awal setiap soal',
+'     A. B. C. D.  pilihan jawaban (satu baris satu pilihan)',
+'     JAWABAN:     kunci pilihan ganda, contoh: JAWABAN: C',
+'     TIPE:        ISIAN atau ESSAY',
+'     KUNCI:       kunci pembahasan untuk soal uraian',
+'     BOBOT:       bobot nilai (1 sampai 5)',
+'',
+'   Identitas ujian (opsional, di baris awal):',
+'     MADRASAH: MI AZ-ZAHRO',
+'     MAPEL: Fiqih',
+'     KELAS: V',
+'     JENIS: UTS',
+'     SEMESTER: Ganjil',
+'     TAHUN AJARAN: 2025/2026',
+'     WAKTU: 60',
+'     PERCOBAAN: 2',
+'     GURU: ',
+'',
+'   Gambar: letakkan gambar pada baris tersendiri DI DALAM blok soal',
+'   (setelah SOAL: dan sebelum pilihan jawaban).',
+'',
+'   Contoh:',
+'     SOAL: Berapa jumlah rukun Islam?',
+'     A. 3',
+'     B. 4',
+'     C. 5',
+'     D. 6',
+'     JAWABAN: C',
+'     BOBOT: 1',
+'',
+'     SOAL: Tuliskan rukun Islam yang pertama!',
+'     TIPE: ISIAN',
+'     JAWABAN: Syahadat|syahadatain',
+'     BOBOT: 2',
+'',
+'B. TEMPLATE DATA SISWA  (impor di tab Pengaturan)',
+'   Berkas: .xlsx (Excel), .csv, atau .txt',
+'   Kolom dipisah titik koma (;) atau koma: NIS;NAMA;KELAS',
+'   Baris pertama boleh judul kolom (akan diabaikan).',
+'',
+'   Contoh:',
+'     NIS;NAMA;KELAS',
+'     1021;Ahmad Fauzi;V',
+'     1022;Siti Aminah;V',
+'     1023;Muhammad Rizki;VI',
+'',
+'   Catatan: NIS harus unik. Baris tanpa NIS akan diabaikan.',
+'   Setelah daftar terisi, aktifkan "Wajibkan NIS terdaftar" agar hanya',
+'   siswa terdaftar yang bisa masuk ujian.',
+'',
+'C. ABSENSI  (tab Absensi)',
+'   Barcode memakai NIS siswa (Code39). Cetak kartu barcode dari portal,',
+'   lalu siswa memindai saat presensi. Data absensi tersimpan di HP ini.',
+''
+  ].join('\n');
+  const b=new Blob([t],{type:'text/plain;charset=utf-8'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(b);
+  a.download='PETUNJUK_FORMAT_TEMPLATE.txt'; a.click();
+  toast('Petunjuk format diunduh','ok');
 }
 function unduhTemplateSiswa(){
   const isi='NIS;NAMA;KELAS\n1021;Ahmad Fauzi;V\n1022;Siti Aminah;V\n1023;Muhammad Rizki;V\n';
@@ -4018,6 +4221,309 @@ muat();
     else if(UJIAN_MANDIRI) bukaUjianMandiri();
   }
 })();
+
+/* =========================================================
+   ABSENSI HARIAN & KARTU BARCODE (100% LOKAL)
+   Data tersimpan di DB.absensi (localStorage HP ini) — tanpa gudang/internet.
+   Status: H Hadir · T Terlambat · S Sakit · I Izin · A Alpa
+   ========================================================= */
+const ABS_LABEL={H:'Hadir',T:'Terlambat',S:'Sakit',I:'Izin',A:'Alpa'};
+const ABS_URUT=['H','T','S','I','A'];
+const ABS_WARNA={H:'#16a34a',T:'#d97706',S:'#2563eb',I:'#7c3aed',A:'#dc2626'};
+const C39={'0':'000110100','1':'100100001','2':'001100001','3':'101100000','4':'000110001',
+'5':'100110000','6':'001110000','7':'000100101','8':'100100100','9':'001100100','A':'100001001',
+'B':'001001001','C':'101001000','D':'000011001','E':'100011000','F':'001011000','G':'000001101',
+'H':'100001100','I':'001001100','J':'000011100','K':'100000011','L':'001000011','M':'101000010',
+'N':'000010011','O':'100010010','P':'001010010','Q':'000000111','R':'100000110','S':'001000110',
+'T':'000010110','U':'110000001','V':'011000001','W':'111000000','X':'010010001','Y':'110010000',
+'Z':'011010000','-':'010000101','.':'110000100',' ':'011000100','*':'010010100'};
+
+let absTanggal='', absKelas='', absStream=null, absDetektor=null, absKameraJalan=false;
+let absScanTerakhir='', absScanWaktu=0;
+
+function absKey(d){ d=d||new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+function absJam(d){ d=d||new Date(); return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')+':'+String(d.getSeconds()).padStart(2,'0'); }
+function absTanggalIndo(key){
+  const p=String(key||'').split('-'); if(p.length!==3) return key||'';
+  const nama=['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+  const d=new Date(+p[0],+p[1]-1,+p[2]); if(isNaN(d.getTime())) return key;
+  return ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'][d.getDay()]+', '+(+p[2])+' '+nama[+p[1]-1]+' '+p[0];
+}
+function absBatas(){ return (DB.settings&&DB.settings.absensiBatas)||'07:15'; }
+function absTepatWaktu(d){
+  const b=String(absBatas()).split(':'); const bm=(parseInt(b[0],10)||7)*60+(parseInt(b[1],10)||0);
+  return (d.getHours()*60+d.getMinutes())<=bm;
+}
+function absEntry(tgl,tanpaBuat){
+  if(!DB.absensi) DB.absensi={};
+  if(!DB.absensi[tgl]){ if(tanpaBuat) return {}; DB.absensi[tgl]={}; }
+  return DB.absensi[tgl];
+}
+function absSiswaKelas(kelas){
+  const k=normalKelas(kelas||'');
+  if(!k) return DB.siswa.slice();
+  return DB.siswa.filter(s=>normalKelas(s.kelas)===k);
+}
+function absCariSiswa(kode){
+  const c=String(kode==null?'':kode).trim().replace(/\s/g,'');
+  if(!c) return null;
+  return DB.siswa.find(x=>String(x.nis).trim()===c)||DB.siswa.find(x=>String(x.nis).trim().toUpperCase()===c.toUpperCase())||null;
+}
+function absSet(nis,status,tgl){
+  tgl=tgl||absTanggal||absKey();
+  const e=absEntry(tgl);
+  if(status===null||status===undefined) delete e[nis]; else e[nis]={s:status,t:absJam()};
+  simpan();
+}
+function absUmpan(html,tipe){
+  const el=document.getElementById('absFeedback'); if(!el) return;
+  el.className='nota '+(tipe==='ok'?'ok':(tipe==='err'?'bahaya':'info'));
+  el.innerHTML=html;
+}
+function absProsesKode(kode){
+  const c=String(kode==null?'':kode).replace(/\*/g,'').trim();
+  if(!c) return false;
+  const now=Date.now();
+  if(c===absScanTerakhir && (now-absScanWaktu)<3000) return false;
+  absScanTerakhir=c; absScanWaktu=now;
+  const s=absCariSiswa(c);
+  if(!s){ absUmpan('❌ NIS <b>'+esc(c)+'</b> tidak ada di daftar siswa.','err'); return false; }
+  if(absKelas && normalKelas(s.kelas)!==normalKelas(absKelas)){ absUmpan('⚠️ <b>'+esc(s.nama)+'</b> bukan siswa kelas '+esc(absKelas)+'.','err'); return false; }
+  const d=new Date(); const st=absTepatWaktu(d)?'H':'T';
+  absSet(s.nis,st,absTanggal);
+  absUmpan('✅ '+(st==='T'?'<b>TERLAMBAT</b> — ':'')+esc(s.nama)+' <span class="muted">('+esc(s.nis)+')</span> · '+absJam(d),'ok');
+  absGambar();
+  return true;
+}
+function absScanManual(){ const el=document.getElementById('absScan'); if(!el) return; const v=el.value.trim(); if(!v) return; absProsesKode(v); el.value=''; el.focus(); }
+async function absMulaiKamera(){
+  const wrap=document.getElementById('absCamWrap'), vid=document.getElementById('absVideo');
+  if(!('BarcodeDetector' in window)){ absUmpan('⚠️ Browser ini belum mendukung scan kamera. Pakai scanner USB atau ketik NIS manual.','err'); return; }
+  try{
+    absStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}});
+    vid.srcObject=absStream; await vid.play();
+    wrap.classList.remove('hide');
+    document.getElementById('absBtnCamStop').classList.remove('hide');
+    absDetektor=new window.BarcodeDetector({formats:['code_39','code_128','ean_13','qr_code']});
+    absKameraJalan=true; absLoop();
+  }catch(e){ absUmpan('❌ Kamera tidak bisa dibuka: '+esc(e.message||e),'err'); }
+}
+function absStopKamera(){
+  absKameraJalan=false;
+  if(absStream){ absStream.getTracks().forEach(t=>t.stop()); absStream=null; }
+  const wrap=document.getElementById('absCamWrap'); if(wrap) wrap.classList.add('hide');
+  const st=document.getElementById('absBtnCamStop'); if(st) st.classList.add('hide');
+}
+async function absLoop(){
+  if(!absKameraJalan) return;
+  try{
+    const vid=document.getElementById('absVideo');
+    if(absDetektor && vid && vid.readyState===4){
+      const hasil=await absDetektor.detect(vid);
+      if(hasil&&hasil.length) absProsesKode(hasil[0].rawValue);
+    }
+  }catch(e){}
+  if(absKameraJalan) setTimeout(absLoop,700);
+}
+function absKelasTersedia(){
+  const set=[]; DB.siswa.forEach(s=>{ const k=String(s.kelas||'').trim(); if(k&&set.indexOf(k)<0) set.push(k); });
+  return set.sort((a,b)=>urutKelas(a)-urutKelas(b));
+}
+function absGambar(){
+  if(!absTanggal) absTanggal=absKey();
+  const dEl=document.getElementById('absTanggal'); if(dEl) dEl.value=absTanggal;
+  const daftar=absKelasTersedia();
+  const sel=document.getElementById('absKelas');
+  if(sel){
+    if(!absKelas||daftar.indexOf(absKelas)<0) absKelas=daftar[0]||'';
+    sel.innerHTML=daftar.length?daftar.map(k=>'<option value="'+esc(k)+'"'+(k===absKelas?' selected':'')+'>Kelas '+esc(k)+'</option>').join(''):'<option value="">(belum ada siswa)</option>';
+    if(absKelas) sel.value=absKelas;
+  }
+  const bEl=document.getElementById('absBatas'); if(bEl&&!bEl.dataset.init){ bEl.value=absBatas(); bEl.dataset.init='1'; }
+  const bt=document.getElementById('absBatasTxt'); if(bt) bt.textContent=absBatas();
+  const lbl=document.getElementById('absTglLabel'); if(lbl) lbl.textContent=absTanggalIndo(absTanggal);
+  const w=document.getElementById('absDaftar');
+  if(w){
+    const siswa=absSiswaKelas(absKelas); const ent=absEntry(absTanggal,true);
+    if(!DB.siswa.length) w.innerHTML='<div class="nota ingat">Belum ada daftar siswa. Buka <b>Pengaturan → Daftar Siswa &amp; NIS</b> dulu.</div>';
+    else if(!siswa.length) w.innerHTML='<div class="nota ingat">Tidak ada siswa untuk kelas ini.</div>';
+    else w.innerHTML='<div class="geser"><table class="tabel"><tr><th>No</th><th>NIS</th><th>Nama</th><th>Status</th><th>Jam</th><th>Ubah</th></tr>'
+      +siswa.map((s,i)=>{ const r=ent[s.nis]||null; const st=r?r.s:'';
+        const badge=st?'<span class="badge" style="background:'+ABS_WARNA[st]+';color:#fff">'+ABS_LABEL[st]+'</span>':'<span class="muted">— belum —</span>';
+        const tb=ABS_URUT.map(x=>'<button class="btn kecil'+(st===x?'':' ghost')+'" style="padding:2px 7px;margin:1px" onclick="absUbah(\''+s.nis+'\',\''+x+'\')">'+x+'</button>').join('');
+        return '<tr><td>'+(i+1)+'</td><td><b>'+esc(s.nis)+'</b></td><td>'+esc(s.nama||'-')+'</td><td>'+badge+'</td><td>'+(r?esc(r.t||''):'')+'</td><td><div class="btn-row" style="gap:2px">'+tb+'</div></td></tr>'; }).join('')
+      +'</table></div>';
+  }
+  absRingkas();
+}
+function absRingkas(){
+  const el=document.getElementById('absRingkas'); if(!el) return;
+  const siswa=absSiswaKelas(absKelas); const ent=absEntry(absTanggal,true);
+  const c={H:0,T:0,S:0,I:0,A:0}; siswa.forEach(s=>{ const r=ent[s.nis]; if(r&&c[r.s]!==undefined) c[r.s]++; });
+  const belum=siswa.length-(c.H+c.T+c.S+c.I+c.A);
+  el.innerHTML=ABS_URUT.map(x=>'<div class="abs-kotak" style="border-color:'+ABS_WARNA[x]+'"><b style="color:'+ABS_WARNA[x]+'">'+c[x]+'</b><span>'+ABS_LABEL[x]+'</span></div>').join('')
+    +'<div class="abs-kotak" style="border-color:#94a3b8"><b style="color:#64748b">'+belum+'</b><span>Belum</span></div>';
+}
+function absUbah(nis,st){ absSet(nis,st,absTanggal); absGambar(); }
+function absSemuaHadir(){
+  if(!absKelas) return toast('Pilih kelas dulu','err');
+  const ent=absEntry(absTanggal); absSiswaKelas(absKelas).forEach(s=>{ if(!ent[s.nis]) ent[s.nis]={s:'H',t:absJam()}; });
+  simpan(); absGambar(); toast('Semua siswa ditandai Hadir','ok');
+}
+function absSisaAlpa(){
+  if(!absKelas) return toast('Pilih kelas dulu','err');
+  const ent=absEntry(absTanggal); let n=0;
+  absSiswaKelas(absKelas).forEach(s=>{ if(!ent[s.nis]){ ent[s.nis]={s:'A',t:absJam()}; n++; } });
+  simpan(); absGambar(); toast(n+' siswa ditandai Alpa','ok');
+}
+function absKosongHari(){
+  if(!confirm('Kosongkan absensi '+absTanggalIndo(absTanggal)+' untuk Kelas '+absKelas+'?')) return;
+  const ent=absEntry(absTanggal); absSiswaKelas(absKelas).forEach(s=>{ delete ent[s.nis]; });
+  simpan(); absGambar(); toast('Absensi dikosongkan','ok');
+}
+function absGantiTanggal(v){ absTanggal=v||absKey(); absGambar(); }
+function absGantiKelas(v){ absKelas=v||''; absGambar(); absGambarKartu(); }
+function absSimpanBatas(){ const el=document.getElementById('absBatas'); DB.settings.absensiBatas=(el&&el.value)||'07:15'; simpan(); absGambar(); toast('Batas jam tepat waktu: '+DB.settings.absensiBatas,'ok'); }
+
+/* ---------- rekap ---------- */
+function absRekapData(dari,sampai,kelas){
+  const siswa=absSiswaKelas(kelas);
+  return siswa.map(s=>{
+    const c={H:0,T:0,S:0,I:0,A:0};
+    Object.keys(DB.absensi||{}).forEach(tgl=>{ if(tgl<dari||tgl>sampai) return; const r=DB.absensi[tgl][s.nis]; if(r&&c[r.s]!==undefined) c[r.s]++; });
+    const hari=c.H+c.T+c.S+c.I+c.A;
+    return {s:s,c:c,hari:hari,pct:hari?Math.round((c.H+c.T)/hari*1000)/10:null};
+  });
+}
+function absInitRekap(){
+  const d1=document.getElementById('absRekapDari'), d2=document.getElementById('absRekapSampai');
+  const now=new Date();
+  if(d1&&!d1.value) d1.value=absKey(new Date(now.getFullYear(),now.getMonth(),1));
+  if(d2&&!d2.value) d2.value=absKey(now);
+}
+function absGambarRekap(){
+  const dari=(document.getElementById('absRekapDari')||{}).value||absKey();
+  const sampai=(document.getElementById('absRekapSampai')||{}).value||absKey();
+  const data=absRekapData(dari,sampai,absKelas);
+  const w=document.getElementById('absRekapArea'); if(!w) return;
+  if(!data.length){ w.innerHTML='<div class="nota ingat">Belum ada siswa.</div>'; return; }
+  w.innerHTML='<div class="geser"><table class="tabel"><tr><th>No</th><th>Nama</th><th>H</th><th>T</th><th>S</th><th>I</th><th>A</th><th>% Hadir</th></tr>'
+    +data.map((r,i)=>'<tr><td>'+(i+1)+'</td><td>'+esc(r.s.nama||'-')+'</td><td>'+r.c.H+'</td><td>'+r.c.T+'</td><td>'+r.c.S+'</td><td>'+r.c.I+'</td><td>'+r.c.A+'</td><td><b>'+(r.pct===null?'—':r.pct+'%')+'</b></td></tr>').join('')
+    +'</table></div><div class="btn-row" style="margin-top:10px"><button class="btn ghost" onclick="absCetakRekap()">🖨️ Cetak Rekap</button></div>';
+}
+function absKopHtml(judul,sub){
+  const s=DB.settings||{}; const lg=logoMadrasah();
+  const inisial=(s.nama||'MI').split(/\s+/).map(x=>x[0]).join('').slice(0,2).toUpperCase();
+  return '<div style="display:flex;align-items:center;gap:12px;border-bottom:3px double #0b6b3a;padding-bottom:8px;margin-bottom:12px">'
+    +'<div style="width:52px;height:52px;border-radius:50%;overflow:hidden;border:2px solid #0b6b3a;display:flex;align-items:center;justify-content:center;font-weight:800;color:#0b6b3a">'
+    +(lg?'<img src="'+lg+'" style="width:100%;height:100%;object-fit:cover">':esc(inisial))+'</div>'
+    +'<div style="flex:1"><div style="font-size:16px;font-weight:800;color:#0b6b3a">'+esc(s.nama||'MI AZ-ZAHRO')+'</div>'
+    +'<div style="font-size:11px;color:#64748b">'+esc(judul)+(sub?' · '+esc(sub):'')+'</div></div>'
+    +'<div style="text-align:right;font-size:11px;color:#64748b">T.A. '+esc(s.tahun||'-')+'<br>Semester '+esc(s.semester||'-')+'</div></div>';
+}
+function tampilkanCetakKustom(html,judulBar,opsi){
+  const lama=document.getElementById('lapisanCetak'); if(lama) lama.remove();
+  const lap=document.createElement('div'); lap.id='lapisanCetak';
+  lap.innerHTML='<div class="bar"><b style="font-size:14.5px">'+esc(judulBar)+'</b><span style="flex:1"></span>'
+    +'<button class="btn" id="absBtnPrintKertas">🖨️ Cetak / Simpan PDF</button>'
+    +'<button class="btn" onclick="tutupLaporan()">✕ Tutup</button></div>'
+    +'<div class="kertas" id="kertasKustom" style="max-width:900px">'+html+'</div>';
+  document.body.appendChild(lap);
+  document.body.style.overflow='hidden';
+  document.getElementById('absBtnPrintKertas').onclick=function(){ absCetakKertas(!!(opsi&&opsi.lanskap)); };
+}
+function absCetakKertas(lanskap){
+  let g=document.getElementById('gayaHalamanCetak');
+  if(!g){ g=document.createElement('style'); g.id='gayaHalamanCetak'; document.head.appendChild(g); }
+  g.textContent='@page{size:A4 '+(lanskap?'landscape':'portrait')+';margin:10mm} #kertasKustom svg{max-width:100%;height:auto}';
+  setTimeout(()=>window.print(),60);
+}
+function absCetakHarian(){
+  const siswa=absSiswaKelas(absKelas); const ent=absEntry(absTanggal,true);
+  if(!siswa.length) return toast('Belum ada siswa','err');
+  let html=absKopHtml('Absensi Harian — Kelas '+absKelas,absTanggalIndo(absTanggal));
+  html+='<table style="width:100%;border-collapse:collapse;font-size:12px"><thead><tr>'
+    +['No','NIS','Nama','Status','Jam'].map(h=>'<th style="border:1px solid #94a3b8;background:#e8f6ee;color:#0b6b3a;padding:4px 6px">'+h+'</th>').join('')+'</tr></thead><tbody>'
+    +siswa.map((s,i)=>{ const r=ent[s.nis]; return '<tr><td style="border:1px solid #cbd5e1;padding:3px 6px;text-align:center">'+(i+1)+'</td><td style="border:1px solid #cbd5e1;padding:3px 6px">'+esc(s.nis)+'</td><td style="border:1px solid #cbd5e1;padding:3px 6px">'+esc(s.nama||'-')+'</td><td style="border:1px solid #cbd5e1;padding:3px 6px;text-align:center">'+(r?ABS_LABEL[r.s]:'—')+'</td><td style="border:1px solid #cbd5e1;padding:3px 6px;text-align:center">'+(r?esc(r.t||''):'')+'</td></tr>'; }).join('')
+    +'</tbody></table><div style="display:flex;justify-content:space-between;margin-top:34px;font-size:12px;text-align:center">'
+    +'<div>Wali Kelas<div style="height:60px"></div><b>'+esc((DB.guru&&DB.guru.nama)||'................................')+'</b></div>'
+    +'<div>'+esc((DB.settings&&DB.settings.nama)||'')+'<div style="height:60px"></div>Kepala Madrasah</div></div>';
+  tampilkanCetakKustom(html,'Absensi Harian — Kelas '+absKelas,{lanskap:false});
+}
+function absCetakRekap(){
+  const dari=(document.getElementById('absRekapDari')||{}).value||absKey();
+  const sampai=(document.getElementById('absRekapSampai')||{}).value||absKey();
+  const data=absRekapData(dari,sampai,absKelas);
+  if(!data.length) return toast('Belum ada siswa','err');
+  let html=absKopHtml('Rekap Kehadiran — Kelas '+absKelas,absTanggalIndo(dari)+' s.d. '+absTanggalIndo(sampai));
+  html+='<table style="width:100%;border-collapse:collapse;font-size:12px"><thead><tr>'
+    +['No','Nama','Hadir','Terlambat','Sakit','Izin','Alpa','% Hadir'].map(h=>'<th style="border:1px solid #94a3b8;background:#e8f6ee;color:#0b6b3a;padding:4px 6px">'+h+'</th>').join('')+'</tr></thead><tbody>'
+    +data.map((r,i)=>'<tr><td style="border:1px solid #cbd5e1;padding:3px 6px;text-align:center">'+(i+1)+'</td><td style="border:1px solid #cbd5e1;padding:3px 6px">'+esc(r.s.nama||'-')+'</td><td style="border:1px solid #cbd5e1;padding:3px 6px;text-align:center">'+r.c.H+'</td><td style="border:1px solid #cbd5e1;padding:3px 6px;text-align:center">'+r.c.T+'</td><td style="border:1px solid #cbd5e1;padding:3px 6px;text-align:center">'+r.c.S+'</td><td style="border:1px solid #cbd5e1;padding:3px 6px;text-align:center">'+r.c.I+'</td><td style="border:1px solid #cbd5e1;padding:3px 6px;text-align:center">'+r.c.A+'</td><td style="border:1px solid #cbd5e1;padding:3px 6px;text-align:center"><b>'+(r.pct===null?'—':r.pct+'%')+'</b></td></tr>').join('')
+    +'</tbody></table><div style="display:flex;justify-content:space-between;margin-top:34px;font-size:12px;text-align:center">'
+    +'<div>Wali Kelas<div style="height:60px"></div><b>'+esc((DB.guru&&DB.guru.nama)||'................................')+'</b></div>'
+    +'<div>'+esc((DB.settings&&DB.settings.nama)||'')+'<div style="height:60px"></div>Kepala Madrasah</div></div>';
+  tampilkanCetakKustom(html,'Rekap Kehadiran — Kelas '+absKelas,{lanskap:false});
+}
+
+/* ---------- barcode Code39 ---------- */
+function code39(teks,mod,hMM){
+  mod=mod||0.33; hMM=hMM||13;
+  const data='*'+String(teks).toUpperCase().replace(/[^0-9A-Z\-. ]/g,'')+'*';
+  const nMod=10; let x=0; const bars=[];
+  for(let i=0;i<data.length;i++){
+    const p=C39[data[i]]; if(!p) continue;
+    for(let j=0;j<9;j++){ const w=(p[j]==='1'?2:1); if(j%2===0) bars.push([x,w]); x+=w; }
+    x+=1;
+  }
+  const total=x+2*nMod;
+  const rects=bars.map(b=>'<rect x="'+(b[0]+nMod)+'" y="0" width="'+b[1]+'" height="100" fill="#000"/>').join('');
+  return '<svg xmlns="http://www.w3.org/2000/svg" width="'+(total*mod).toFixed(2)+'mm" height="'+hMM+'mm" viewBox="0 0 '+total+' 100" preserveAspectRatio="none">'+rects+'</svg>';
+}
+function absKartuHtml(){
+  const siswa=absSiswaKelas(absKelas);
+  return '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px">'
+    +siswa.map(s=>'<div style="border:1px solid #94a3b8;border-radius:8px;padding:8px;break-inside:avoid">'
+      +'<div style="font-weight:800;font-size:13px">'+esc(s.nama||'-')+'</div>'
+      +'<div style="font-size:10.5px;color:#64748b">NIS '+esc(s.nis)+' · Kelas '+esc(s.kelas||'-')+'</div>'
+      +'<div style="margin:5px 0">'+code39(String(s.nis))+'</div>'
+      +'<div style="font-size:10.5px;letter-spacing:1.5px;text-align:center">'+esc(s.nis)+'</div></div>').join('')+'</div>';
+}
+function absGambarKartu(){
+  const w=document.getElementById('absKartuArea'); if(!w) return;
+  const siswa=absSiswaKelas(absKelas);
+  if(!DB.siswa.length){ w.innerHTML='<div class="nota ingat">Belum ada daftar siswa.</div>'; return; }
+  if(!siswa.length){ w.innerHTML='<div class="nota ingat">Tidak ada siswa untuk kelas ini.</div>'; return; }
+  w.innerHTML='<div class="abs-kartu-grid">'+siswa.map(s=>'<div class="abs-kartu">'
+    +'<div class="abs-kartu-nm">'+esc(s.nama||'-')+'</div>'
+    +'<div class="abs-kartu-sub">NIS '+esc(s.nis)+' · Kelas '+esc(s.kelas||'-')+'</div>'
+    +'<div class="abs-barcode">'+code39(String(s.nis))+'</div>'
+    +'<div class="abs-kartu-kode">'+esc(s.nis)+'</div></div>').join('')+'</div>';
+}
+function absCetakKartu(){
+  const siswa=absSiswaKelas(absKelas);
+  if(!siswa.length) return toast('Belum ada siswa','err');
+  tampilkanCetakKustom(absKopHtml('Kartu Barcode Kehadiran — Kelas '+absKelas,'')+absKartuHtml(),'Kartu Barcode — Kelas '+absKelas,{lanskap:false});
+}
+function absUnduhKartuHTML(){
+  const siswa=absSiswaKelas(absKelas);
+  if(!siswa.length) return toast('Belum ada siswa','err');
+  const body=absKopHtml('Kartu Barcode Kehadiran — Kelas '+absKelas,'')+absKartuHtml();
+  const full='<!DOCTYPE html><html lang="id"><head><meta charset="utf-8"><title>Kartu Barcode Kelas '+esc(absKelas)+'</title>'
+    +'<style>body{font-family:"Segoe UI",Arial,sans-serif;margin:14px;color:#14342a}@page{size:A4 portrait;margin:10mm}svg{max-width:100%}</style></head><body>'
+    +body+'<scr'+'ipt>window.onload=function(){setTimeout(function(){window.print()},500)}</scr'+'ipt></body></html>';
+  absUnduh('Kartu_Barcode_Kelas_'+absKelas+'.html',full,'text/html');
+}
+function absCsv(rows){ return rows.map(r=>r.map(c=>{ const s=String(c==null?'':c); return /[",;\n]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s; }).join(';')).join('\r\n'); }
+function absUnduh(nama,isi,tipe){ const b=new Blob([isi],{type:(tipe||'text/csv')+';charset=utf-8'}); const a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download=nama; a.click(); }
+function absEksporCSV(){
+  const siswa=absSiswaKelas(absKelas); const ent=absEntry(absTanggal,true);
+  const rows=[['Absensi Harian',(DB.settings&&DB.settings.nama)||'','Kelas '+absKelas,absTanggalIndo(absTanggal)],['No','NIS','Nama','Kelas','Status','Jam']];
+  siswa.forEach((s,i)=>{ const r=ent[s.nis]; rows.push([i+1,s.nis,s.nama||'',s.kelas||'',r?ABS_LABEL[r.s]:'',r?r.t:'']); });
+  absUnduh('absensi_'+absKelas+'_'+absTanggal+'.csv','\ufeff'+absCsv(rows));
+}
+function absInit(){ absTanggal=absKey(); absInitRekap(); absGambar(); }
+window.addEventListener('beforeunload',absStopKamera);
+absInit();
 </script>
 </body>
 </html>
