@@ -251,9 +251,29 @@ pre.template{background:#0f2b20;color:#d6f0e0;border-radius:10px;padding:15px;ov
 
 /* ---------- ABSENSI (lokal) ---------- */
 .abs-ringkas{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
-.abs-kotak{border:2px solid #94a3b8;border-radius:10px;padding:6px 12px;min-width:74px;text-align:center;background:#fff}
+.abs-kotak{border:2px solid #94a3b8;border-radius:10px;padding:6px 12px;min-width:74px;text-align:center;background:#fff;
+  box-shadow:0 1px 2px rgba(16,40,30,.05)}
 .abs-kotak b{display:block;font-size:20px;line-height:1.1}
 .abs-kotak span{font-size:11px;color:var(--abu)}
+/* daftar siswa absensi — kartu responsif (ramah HP) */
+.abs-list{display:flex;flex-direction:column;gap:6px}
+.abs-row{display:flex;align-items:center;gap:8px;padding:7px 10px;border:1px solid var(--garis);border-radius:11px;background:#fff;
+  box-shadow:0 1px 2px rgba(16,40,30,.05);flex-wrap:wrap}
+.abs-row-no{width:20px;text-align:center;color:var(--abu);font-size:12px;flex:0 0 auto}
+.abs-row-info{flex:1 1 150px;min-width:110px;line-height:1.3}
+.abs-row-info b{font-size:11.5px;color:var(--abu);font-weight:600;letter-spacing:.3px}
+.abs-row-nama{font-weight:600;font-size:14px}
+.abs-row-st{display:flex;align-items:center;gap:6px;flex:0 0 auto}
+.abs-badge{padding:3px 9px;border-radius:20px;font-size:11.5px;font-weight:700;color:#fff;white-space:nowrap}
+.abs-badge.kosong{background:#e2e8f0;color:#64748b;font-weight:600}
+.abs-row-jam{font-size:11px;color:var(--abu);white-space:nowrap}
+.abs-row-aksi{display:flex;gap:3px;flex:0 0 auto;margin-left:auto}
+.abs-btn{width:29px;height:29px;border-radius:8px;border:1.5px solid var(--garis);background:linear-gradient(180deg,#fff,#f5faf7);color:#436356;
+  font-weight:700;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  box-shadow:0 1px 2px rgba(16,40,30,.06);transition:transform .14s ease,box-shadow .18s ease,border-color .18s ease,color .18s ease}
+.abs-btn:hover{border-color:var(--hijau2);color:var(--hijau);box-shadow:0 3px 8px rgba(11,107,58,.16);transform:translateY(-1px)}
+.abs-btn.on{color:#fff;border-color:transparent;box-shadow:0 2px 6px rgba(0,0,0,.20)}
+@media (max-width:430px){ .abs-row-aksi{flex:1 1 100%;justify-content:flex-end;margin-left:0} }
 .abs-kartu-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
 .abs-kartu{border:1px solid var(--garis);border-radius:9px;padding:9px;background:#fff;break-inside:avoid}
 .abs-kartu-nm{font-weight:800;font-size:13px}
@@ -470,6 +490,7 @@ pre.template{background:#0f2b20;color:#d6f0e0;border-radius:10px;padding:15px;ov
     <div class="card">
       <h2>🖐️ Absensi Harian — Scan Barcode</h2>
       <p class="muted" style="margin-bottom:11px">Data absensi disimpan <b>di HP ini saja</b> — tanpa internet dan tanpa gudang. Untuk memindahkan ke HP lain, pakai <b>Pengaturan → Cadangkan &amp; Pulihkan Data</b>.</p>
+      <div class="nota info" style="margin-bottom:11px">📌 <b>Daftar kelas terisi otomatis</b> dari <b>Data Guru → Kelas yang Diampu</b> (diisi saat pertama masuk portal). Bila daftar siswa sudah diimpor, kelasnya ikut muncul di sini. Guru <b>tidak perlu</b> memasukkan kelas lagi.</div>
       <div class="grid3 baris">
         <div><label>Tanggal</label><input type="date" id="absTanggal" class="inp" onchange="absGantiTanggal(this.value)"></div>
         <div><label>Kelas</label><select id="absKelas" class="inp" onchange="absGantiKelas(this.value)"></select></div>
@@ -643,13 +664,15 @@ pre.template{background:#0f2b20;color:#d6f0e0;border-radius:10px;padding:15px;ov
 
     <div class="card">
       <h2>Cadangkan &amp; Pulihkan Data</h2>
-      <p class="muted" style="margin-bottom:11px">Data tersimpan di browser komputer ini. Untuk memindahkan ke komputer lain, unduh cadangan lalu muat di komputer tujuan.</p>
+      <p class="muted" style="margin-bottom:9px">Cadangan memuat <b>seluruh data</b> dalam satu berkas <b>.json</b>: pengaturan, daftar siswa, semua paket soal, seluruh hasil ujian, data guru, <b>dan absensi harian</b>. Simpan berkas ini untuk memindahkan data ke HP/komputer lain.</p>
+      <div class="nota info" style="margin-bottom:11px">📦 Data saat ini: <b id="ringkasData">—</b></div>
       <div class="btn-row">
         <button class="btn ghost" onclick="unduhCadangan()">⬇️ Unduh Cadangan (.json)</button>
         <button class="btn ghost" onclick="document.getElementById('fileCadangan').click()">⬆️ Muat Cadangan</button>
         <input type="file" id="fileCadangan" accept=".json" class="hide">
         <button class="btn merah" onclick="hapusSemua()">🗑️ Hapus Semua Data</button>
       </div>
+      <p class="muted" style="margin-top:10px">Saat memuat cadangan, sistem menampilkan isi berkas lebih dulu (jumlah paket, siswa, hasil, dan hari absensi) sebelum menggantikan data.</p>
     </div>
   </div>
 
@@ -3024,6 +3047,8 @@ function isiSetting(){
   gambarTabelSiswa();
   isiSettingGuru();
   isiSettingLisensi();
+  const rk=document.getElementById('ringkasData');
+  if(rk) rk.textContent=ringkasanData();
 }
 function simpanSetting(){
   const s=DB.settings;
@@ -3287,20 +3312,34 @@ document.getElementById('fileCadangan').addEventListener('change',function(){
     try{
       const d=JSON.parse(fr.result);
       if(!d.exams) throw new Error('format tidak dikenali');
-      if(!confirm('Muat cadangan ini? Seluruh data saat ini ('+DB.exams.length+' paket, '+DB.results.length+' hasil) akan digantikan.')) return;
+      const hariAbs=Object.keys(d.absensi||{}).length;
+      const pesan='Muat cadangan ini?\n\nIsi cadangan:\n'+
+        '• '+(d.exams||[]).length+' paket soal\n'+
+        '• '+((d.siswa||[]).length)+' siswa\n'+
+        '• '+((d.results||[]).length)+' hasil ujian\n'+
+        '• '+hariAbs+' hari absensi\n\n'+
+        'Seluruh data yang ada sekarang akan digantikan. Lanjutkan?';
+      if(!confirm(pesan)) return;
       localStorage.setItem(DB_KEY,JSON.stringify(d));
-      muat(); terapkanIdentitas(); gambarPaket(); gambarFilter(); isiSetting(); segarkanBeranda();
-      toast('Cadangan berhasil dimuat','ok');
+      muat(); terapkanIdentitas(); gambarPaket(); gambarFilter(); isiSetting(); segarkanBeranda(); isiSettingGuru();
+      toast('Cadangan dimuat — '+ringkasanData(),'ok');
     }catch(e){ toast('File cadangan tidak sah','err'); }
   };
   fr.readAsText(f);
 });
+function ringkasanData(){
+  const hariAbs=Object.keys(DB.absensi||{}).length;
+  return DB.exams.length+' paket soal · '+DB.siswa.length+' siswa · '+DB.results.length+' hasil ujian · '+hariAbs+' hari absensi';
+}
 function unduhCadangan(){
+  /* Seluruh isi DB ikut tersimpan: pengaturan, daftar siswa, paket soal,
+     hasil ujian, data guru, DAN absensi harian (DB.absensi). */
   const blob=new Blob([JSON.stringify(DB,null,2)],{type:'application/json'});
   const a=document.createElement('a');
   a.href=URL.createObjectURL(blob);
-  a.download='cadangan_ujian_'+new Date().toISOString().slice(0,10)+'.json';
-  a.click(); toast('Cadangan diunduh','ok');
+  a.download='cadangan_portal_cbt_'+new Date().toISOString().slice(0,10)+'.json';
+  a.click();
+  toast('Cadangan diunduh — '+ringkasanData(),'ok');
 }
 function hapusSemua(){
   if(!confirm('PERINGATAN: seluruh paket soal, hasil ujian, dan pengaturan akan dihapus permanen. Lanjutkan?')) return;
@@ -4326,7 +4365,13 @@ async function absLoop(){
   if(absKameraJalan) setTimeout(absLoop,700);
 }
 function absKelasTersedia(){
-  const set=[]; DB.siswa.forEach(s=>{ const k=String(s.kelas||'').trim(); if(k&&set.indexOf(k)<0) set.push(k); });
+  /* Kelas diambil dari DUA sumber: (1) kelas yang diampu guru — diisi saat
+     guru pertama masuk portal, dan (2) kelas yang ada di daftar siswa.
+     Jadi guru tidak perlu memasukkan kelas lagi. */
+  const set=[];
+  const tambah=v=>{ const s=String(v==null?'':v).trim(); if(!s||kelasUmum(s)) return; if(set.indexOf(s)<0) set.push(s); };
+  ((DB.guru&&DB.guru.kelas)||[]).forEach(tambah);
+  DB.siswa.forEach(s=>tambah(s.kelas));
   return set.sort((a,b)=>urutKelas(a)-urutKelas(b));
 }
 function absGambar(){
@@ -4336,7 +4381,7 @@ function absGambar(){
   const sel=document.getElementById('absKelas');
   if(sel){
     if(!absKelas||daftar.indexOf(absKelas)<0) absKelas=daftar[0]||'';
-    sel.innerHTML=daftar.length?daftar.map(k=>'<option value="'+esc(k)+'"'+(k===absKelas?' selected':'')+'>Kelas '+esc(k)+'</option>').join(''):'<option value="">(belum ada siswa)</option>';
+    sel.innerHTML=daftar.length?daftar.map(k=>'<option value="'+esc(k)+'"'+(k===absKelas?' selected':'')+'>Kelas '+esc(k)+'</option>').join(''):'<option value="">(kelas belum diisi)</option>';
     if(absKelas) sel.value=absKelas;
   }
   const bEl=document.getElementById('absBatas'); if(bEl&&!bEl.dataset.init){ bEl.value=absBatas(); bEl.dataset.init='1'; }
@@ -4345,14 +4390,20 @@ function absGambar(){
   const w=document.getElementById('absDaftar');
   if(w){
     const siswa=absSiswaKelas(absKelas); const ent=absEntry(absTanggal,true);
-    if(!DB.siswa.length) w.innerHTML='<div class="nota ingat">Belum ada daftar siswa. Buka <b>Pengaturan → Daftar Siswa &amp; NIS</b> dulu.</div>';
-    else if(!siswa.length) w.innerHTML='<div class="nota ingat">Tidak ada siswa untuk kelas ini.</div>';
-    else w.innerHTML='<div class="geser"><table class="tabel"><tr><th>No</th><th>NIS</th><th>Nama</th><th>Status</th><th>Jam</th><th>Ubah</th></tr>'
+    if(!DB.siswa.length) w.innerHTML='<div class="nota ingat">Belum ada daftar siswa. Buka <b>Pengaturan → Daftar Siswa &amp; NIS</b>, lalu impor atau tempel daftar siswa'+(absKelas?' untuk <b>Kelas '+esc(absKelas)+'</b>':'')+'.</div>';
+    else if(!siswa.length) w.innerHTML='<div class="nota ingat">Tidak ada siswa di <b>Kelas '+esc(absKelas)+'</b>. Pilih kelas lain, atau lengkapi daftar siswa di <b>Pengaturan</b>.</div>';
+    else w.innerHTML='<div class="abs-list">'
       +siswa.map((s,i)=>{ const r=ent[s.nis]||null; const st=r?r.s:'';
-        const badge=st?'<span class="badge" style="background:'+ABS_WARNA[st]+';color:#fff">'+ABS_LABEL[st]+'</span>':'<span class="muted">— belum —</span>';
-        const tb=ABS_URUT.map(x=>'<button class="btn kecil'+(st===x?'':' ghost')+'" style="padding:2px 7px;margin:1px" onclick="absUbah(\''+s.nis+'\',\''+x+'\')">'+x+'</button>').join('');
-        return '<tr><td>'+(i+1)+'</td><td><b>'+esc(s.nis)+'</b></td><td>'+esc(s.nama||'-')+'</td><td>'+badge+'</td><td>'+(r?esc(r.t||''):'')+'</td><td><div class="btn-row" style="gap:2px">'+tb+'</div></td></tr>'; }).join('')
-      +'</table></div>';
+        const badge=st?'<span class="abs-badge" style="background:'+ABS_WARNA[st]+'">'+ABS_LABEL[st]+'</span>':'<span class="abs-badge kosong">belum</span>';
+        const jam=r?'<span class="abs-row-jam">'+esc(r.t||'')+'</span>':'';
+        const tb=ABS_URUT.map(x=>'<button class="abs-btn'+(st===x?' on':'')+'" style="'+(st===x?'background:'+ABS_WARNA[x]:'')+'" title="'+ABS_LABEL[x]+'" onclick="absUbah(\''+s.nis+'\',\''+x+'\')">'+x+'</button>').join('');
+        return '<div class="abs-row">'
+          +'<div class="abs-row-no">'+(i+1)+'</div>'
+          +'<div class="abs-row-info"><b>'+esc(s.nis)+'</b><div class="abs-row-nama">'+esc(s.nama||'-')+'</div></div>'
+          +'<div class="abs-row-st">'+badge+jam+'</div>'
+          +'<div class="abs-row-aksi">'+tb+'</div>'
+          +'</div>'; }).join('')
+      +'</div>';
   }
   absRingkas();
 }
