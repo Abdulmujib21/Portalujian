@@ -1236,7 +1236,14 @@ function pasangBerkasUjian(){
     DB.settings.logo=d.logo;
     try{ terapkanIdentitas(); }catch(e){}
   }
-  if(d.paket){ DB.settings.semester=d.paket.semester||DB.settings.semester; DB.settings.tahun=d.paket.tahun||DB.settings.tahun; }
+  if(d.paket){
+    /* Paket yang dibagikan guru otomatis dianggap TERBUKA.
+       Tanpa ini, paket yang belum ditandai "aktif" tidak muncul di daftar siswa
+       sehingga siswa macet di halaman pertama (mode bagi link). */
+    d.paket.aktif=true;
+    DB.settings.semester=d.paket.semester||DB.settings.semester;
+    DB.settings.tahun=d.paket.tahun||DB.settings.tahun;
+  }
   DB.exams=[d.paket];
   DB.siswa=Array.isArray(d.siswa)?d.siswa:[];
   if(!Array.isArray(DB.results)) DB.results=[];
@@ -4262,6 +4269,10 @@ async function siapkanModeLink(){
   pasangBerkasUjian();
   return true;
 }
+function labelKelasPaket(e){
+  const k=(e&&e.kelas)||'';
+  return kelasUmum(k)?'Semua Kelas':('Kelas '+k);
+}
 function siapkanFormLink(){
   const el=id=>document.getElementById(id);
   el('blokPilih').classList.add('hide');
@@ -4274,6 +4285,14 @@ function siapkanFormLink(){
   gambarPaketSiswa();
   const d=UJIAN_MANDIRI||{}, e=d.paket||{};
   el('inPaket').value=e.id||'';
+  /* Jaring pengaman: kalau pilihannya tetap kosong, pasang sendiri.
+     Di mode link baris paket disembunyikan, jadi siswa tidak punya cara memilih manual. */
+  if(e.id && String(el('inPaket').value)!==String(e.id)){
+    el('inPaket').innerHTML='<option value="'+esc(e.id)+'" selected>'+
+      esc((e.mapel||'Ujian')+' — '+labelKelasPaket(e)+' — '+(e.jenis||'')+
+          ' ('+((e.questions||[]).length)+' soal, '+(e.waktu||'')+' menit)')+'</option>';
+    el('inPaket').value=String(e.id);
+  }
   el('inKelas').innerHTML='<option value="'+esc(e.kelas||'')+'" selected>'+esc(e.kelas||'-')+'</option>';
   el('inKelas').disabled=true;
   const cat=el('catatanPaketSiswa');
