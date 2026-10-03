@@ -4117,11 +4117,11 @@ function jsonp(url,timeoutMs){
     document.head.appendChild(s);
   });
 }
-async function gudangAmbil(aksi,param){
+async function gudangAmbil(aksi,param,batasMs){
   if(!gudangSiap()) throw new Error('Alamat gudang belum diisi');
   const qs=Object.keys(param||{}).map(k=>k+'='+encodeURIComponent(param[k])).join('&');
   const u=gudangUrl();
-  return jsonp(u+(u.indexOf('?')<0?'?':'&')+'action='+aksi+(qs?'&'+qs:''));
+  return jsonp(u+(u.indexOf('?')<0?'?':'&')+'action='+aksi+(qs?'&'+qs:''), batasMs);
 }
 async function kirimKeGudang(payload){
   if(!gudangSiap()) throw new Error('Alamat gudang belum diisi');
@@ -4145,62 +4145,132 @@ async function ujiGudang(){
 /* --- guru: membuat & membagikan link --- */
 /* Perkecil logo sekolah agar bisa ikut di dalam link ujian.
    Logo asli tetap utuh di Pengaturan; hanya salinan kecil yang dibagikan. */
+function jedaMs(ms){ return new Promise(r=>setTimeout(r,ms)); }
+
+/* Ubah data URL gambar menjadi teks ringkas yang AMAN di dalam link.
+   Hanya memakai huruf/angka, tanda hubung, dan garis bawah, sehingga tidak
+   perlu di-escape lagi (dulu di-escape sehingga link jadi jauh lebih panjang). */
+function rapatBase64(b64){ return String(b64).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,''); }
+function b64KeAsli(t){ t=String(t).replace(/-/g,'+').replace(/_/g,'/'); while(t.length%4) t+='='; return t; }
+function logoKeTeks(dataUrl){
+  const m=/^data:image\/(png|webp|jpe?g);base64,([A-Za-z0-9+/=]+)$/i.exec(String(dataUrl||''));
+  if(!m) return '';
+  const j=m[1].toLowerCase();
+  return (j==='webp'?'w':(j==='png'?'p':'j'))+rapatBase64(m[2]);
+}
+function teksKeLogo(teks){
+  const t=String(teks||'');
+  if(!t) return '';
+  if(t.indexOf('data:image/')===0) return t;            // format link lama, tetap didukung
+  const isi=b64KeAsli(t.slice(1));
+  if(!/^[A-Za-z0-9+/=]+$/.test(isi)) return '';
+  const mime=t.charAt(0)==='w'?'image/webp':(t.charAt(0)==='j'?'image/jpeg':'image/png');
+  return 'data:'+mime+';base64,'+isi;
+}
+
+/* Perkecil logo sekolah agar bisa ikut di dalam link ujian tanpa membuat link
+   kepanjangan. Logo asli di Pengaturan tetap utuh. */
 function logoBagikan(){
   return new Promise(resolve=>{
     try{
       const src=(DB.settings&&DB.settings.logo)||'';
       if(!src || src.indexOf('data:image/')!==0) return resolve('');
-      if(src.length<=20000) return resolve(src);          // sudah kecil, pakai apa adanya
+      if(src.length<=6000) return resolve(logoKeTeks(src));   // sudah ringkas
       const img=new Image();
       img.onload=function(){
         try{
-          const M=128;
-          const w=img.naturalWidth||img.width, hh=img.naturalHeight||img.height;
-          if(!w||!hh) return resolve(src);
-          const r=Math.min(1, M/Math.max(w,hh));
-          const cw=Math.max(1,Math.round(w*r)), ch=Math.max(1,Math.round(hh*r));
-          const c=document.createElement('canvas'); c.width=cw; c.height=ch;
-          const g=c.getContext('2d'); g.drawImage(img,0,0,cw,ch);
-          resolve(c.toDataURL('image/png'));
-        }catch(e){ resolve(src); }
+          const w0=img.naturalWidth||img.width, h0=img.naturalHeight||img.height;
+          if(!w0||!h0) return resolve(logoKeTeks(src));
+          /* Coba beberapa ukuran berturut-turut sampai hasilnya cukup pendek
+             untuk sebuah link. Ukuran pertama sudah cukup tajam untuk kepala
+             halaman, jadi biasanya langsung berhenti di percobaan pertama. */
+          const rencana=[[96,0.85],[80,0.8],[64,0.75],[48,0.7]];
+          let terakhir='';
+          for(let i=0;i<rencana.length;i++){
+            const M=rencana[i][0], mutu=rencana[i][1];
+            const r=Math.min(1, M/Math.max(w0,h0));
+            const cw=Math.max(1,Math.round(w0*r)), ch=Math.max(1,Math.round(h0*r));
+            const c=document.createElement('canvas'); c.width=cw; c.height=ch;
+            const g=c.getContext('2d'); g.drawImage(img,0,0,cw,ch);
+            let out='';
+            try{ out=c.toDataURL('image/webp',mutu); }catch(e){ out=''; }   // webp jauh lebih kecil
+            if(!out || out.indexOf('data:image/webp')!==0) out=c.toDataURL('image/png');
+            const teks=logoKeTeks(out);
+            if(teks){ terakhir=teks; if(teks.length<=9000) return resolve(teks); }
+          }
+          resolve(terakhir || logoKeTeks(src));
+        }catch(e){ resolve(logoKeTeks(src)); }
       };
-      img.onerror=function(){ resolve(src); };
+      img.onerror=function(){ resolve(logoKeTeks(src)); };
       img.src=src;
     }catch(e){ resolve(''); }
   });
 }
 
+function tampilSibuk(judul,pesan){
+  const lama=document.getElementById('tiraiSibuk'); if(lama) lama.remove();
+  const t=document.createElement('div');
+  t.className='tirai'; t.id='tiraiSibuk';
+  t.innerHTML='<div class="kotak" style="max-width:400px;text-align:center">'+
+    '<h3>'+esc(judul)+'</h3><p class="muted">'+esc(pesan)+'</p>'+
+    '<div style="font-size:30px;margin-top:4px">⏳</div></div>';
+  document.body.appendChild(t);
+  return t;
+}
 async function bagikanLink(examId){
   const e=DB.exams.find(x=>x.id===examId);
   if(!e) return toast('Paket ujian tidak ditemukan','err');
-  let url='', catatan='';
-  if(gudangSiap()){
-    try{
-      const siswa=DB.siswa.filter(s=>kelasCocok(e.kelas,s.kelas));
-      await kirimKeGudang({action:'simpanPaket', paket:e, siswa:siswa, madrasah:DB.settings.nama||'', npsn:DB.settings.npsn||''});
-      let cek=null;
-      try{ cek=await gudangAmbil('getExam',{id:e.id}); }catch(err){}
-      url=alamatDasar()+'#/ujian/'+encodeURIComponent(e.id);
-      catatan=(cek&&cek.ok)
-        ? 'Soal sudah tersimpan di gudang. Link ini bisa dibuka siswa dari HP mana pun.'
-        : 'Soal sudah dikirim ke gudang. Bila ragu, tekan “Uji Koneksi Gudang” di Pengaturan.';
-    }catch(err){
-      return toast('Gagal mengirim soal ke gudang: '+err.message,'err');
-    }
-  } else {
-    const data={ jenis:'berkas-ujian', versi:1,
-      madrasah:DB.settings.nama||'', npsn:DB.settings.npsn||'',
-      kelas:e.kelas, guruPengampu:e.guru||namaGuru()||'', dibuat:new Date().toISOString(),
-      paket:e, siswa:DB.siswa.filter(s=>kelasCocok(e.kelas,s.kelas)) };
-    const kode=await padatkan(JSON.stringify(data));
-    url=alamatDasar()+'#/ujian/'+encodeURIComponent(e.id)+'?d='+kode;
-    catatan='Belum ada gudang, jadi soal ikut menempel di dalam link.'+(e.questions.some(q=>q.gambar)?' Karena ada gambar soal, link ini akan sangat panjang dan sebaiknya dihindari.':'');
-  }
+  const tirai=tampilSibuk('Menyiapkan link ujian…','Soal sedang dikirim ke gudang. Jangan tutup halaman ini.');
+  let url='', catatan='', pakaiGudang=false;
   try{
-    const lg=await logoBagikan();
-    if(lg) url+=(url.indexOf('?')>=0?'&':'?')+'lg='+encodeURIComponent(lg);
-  }catch(err){}
+    if(gudangSiap()){
+      pakaiGudang=true;
+      const siswa=DB.siswa.filter(s=>kelasCocok(e.kelas,s.kelas));
+      /* Kirim soal dan siapkan logo SEKALIGUS (dulu berurutan, jadi menunggu dua kali). */
+      const hasil=await Promise.all([
+        kirimKeGudang({action:'simpanPaket', paket:e, siswa:siswa, madrasah:DB.settings.nama||'', npsn:DB.settings.npsn||''}),
+        logoBagikan()
+      ]);
+      const lg=hasil[1];
+      url=alamatDasar()+'#/ujian/'+encodeURIComponent(e.id);
+      if(lg) url+='?lg='+lg;                       // tidak di-escape: teksnya sudah aman
+      catatan='Soal sudah dikirim ke gudang. Link ini bisa dibuka siswa dari HP mana pun.';
+    } else {
+      const data={ jenis:'berkas-ujian', versi:1,
+        madrasah:DB.settings.nama||'', npsn:DB.settings.npsn||'',
+        kelas:e.kelas, guruPengampu:e.guru||namaGuru()||'', dibuat:new Date().toISOString(),
+        paket:e, siswa:DB.siswa.filter(s=>kelasCocok(e.kelas,s.kelas)) };
+      const kode=await padatkan(JSON.stringify(data));
+      const lg=await logoBagikan();
+      url=alamatDasar()+'#/ujian/'+encodeURIComponent(e.id)+'?d='+kode+(lg?'&lg='+lg:'');
+      catatan='Belum ada gudang, jadi soal ikut menempel di dalam link.'+(e.questions.some(q=>q.gambar)?' Karena ada gambar soal, link ini akan sangat panjang dan sebaiknya dihindari.':'');
+    }
+  }catch(err){
+    if(tirai) tirai.remove();
+    return toast('Gagal mengirim soal ke gudang: '+err.message,'err');
+  }
+  if(tirai) tirai.remove();
   tampilLink(url,catatan,e);
+  /* Dulu pengecekan gudang dilakukan SEBELUM link tampil, sehingga tombol
+     terasa sangat lama. Sekarang link tampil dulu, pengecekan jalan di
+     belakang layar dan hasilnya menimpa keterangan di kotak link. */
+  if(pakaiGudang) periksaLinkGudang(e);
+}
+async function periksaLinkGudang(e){
+  const ubah=teks=>{ const p=document.getElementById('catatanLink'); if(p) p.innerHTML=teks; };
+  try{
+    let cek=null;
+    for(let i=0;i<2;i++){
+      try{ cek=await gudangAmbil('getExam',{id:e.id}); }catch(err){ cek=null; }
+      if(cek&&cek.ok) break;
+      if(i<1) await jedaMs(1500);
+    }
+    ubah(cek&&cek.ok
+      ? '✅ Soal sudah tersimpan di gudang dan siap dibuka siswa dari HP mana pun.'
+      : '⚠️ Soal terkirim, tetapi belum terbaca di gudang. Tekan “Uji Koneksi Gudang” di Pengaturan, lalu bagikan ulang link ini.');
+  }catch(err){
+    ubah('⚠️ Gudang belum menjawab. Tekan “Uji Koneksi Gudang” di Pengaturan, lalu bagikan ulang link ini.');
+  }
 }
 function tampilLink(url,catatan,e){
   const lama=document.getElementById('tiraiLink'); if(lama) lama.remove();
@@ -4208,7 +4278,7 @@ function tampilLink(url,catatan,e){
   t.className='tirai'; t.id='tiraiLink';
   t.innerHTML='<div class="kotak">'+
     '<h3>🔗 Link Ujian Siswa</h3>'+
-    '<p class="muted" style="margin-bottom:9px">'+esc(catatan)+'</p>'+
+    '<p class="muted" id="catatanLink" style="margin-bottom:9px">'+esc(catatan)+'</p>'+
     '<div class="nota info" style="text-align:left"><b>'+esc(e.mapel)+'</b> — '+esc(e.jenis)+' · Kelas '+esc(kelasUmum(e.kelas)?'Semua':e.kelas)+' · '+e.questions.length+' soal</div>'+
     '<textarea id="taLink" class="inp" rows="4" style="font-size:12.5px" readonly>'+esc(url)+'</textarea>'+
     '<div class="btn-row" style="margin-top:13px">'+
@@ -4242,8 +4312,8 @@ async function siapkanModeLink(){
      seperti portal guru (kop & lingkaran logo). */
   if(q.lg){
     try{
-      const lg=String(q.lg);
-      if(lg.indexOf('data:image/')===0 && !((DB.settings||{}).logo)){
+      const lg=teksKeLogo(q.lg);
+      if(lg && !((DB.settings||{}).logo)){
         DB.settings.logo=lg;
         try{ terapkanIdentitas(); }catch(e){}
       }
@@ -4255,14 +4325,26 @@ async function siapkanModeLink(){
     try{ data=JSON.parse(teks); }catch(e){ data=null; }
   }
   if(!data && gudangSiap()){
-    try{
-      const d=await gudangAmbil('getExam',{id:MODE_LINK.examId});
-      if(d&&d.ok&&d.paket){
-        data={ jenis:'berkas-ujian', versi:1, madrasah:d.madrasah||'', npsn:d.npsn||'',
-          kelas:d.paket.kelas, guruPengampu:d.paket.guru||'', paket:d.paket,
-          siswa:Array.isArray(d.siswa)?d.siswa:[] };
+    /* Soal diambil dari gudang. Kadang gudang belum siap menjawab (baru saja
+       menerima kiriman atau sedang sibuk). Dulu sekali gagal langsung dianggap
+       link tidak berlaku sehingga siswa harus men-refresh. Sekarang dicoba
+       beberapa kali lebih dulu. */
+    for(let i=0;i<3;i++){
+      try{
+        const d=await gudangAmbil('getExam',{id:MODE_LINK.examId},8000);
+        if(d&&d.ok&&d.paket){
+          data={ jenis:'berkas-ujian', versi:1, madrasah:d.madrasah||'', npsn:d.npsn||'',
+            kelas:d.paket.kelas, guruPengampu:d.paket.guru||'', paket:d.paket,
+            siswa:Array.isArray(d.siswa)?d.siswa:[] };
+          break;
+        }
+      }catch(e){}
+      if(i<2){
+        const box=document.getElementById('catatanPaketSiswa');
+        if(box) box.innerHTML='<div class="nota info">⏳ Soal sedang dimuat… percobaan ke-'+(i+2)+' dari 3. Mohon tunggu.</div>';
+        await jedaMs(1200+i*800);
       }
-    }catch(e){}
+    }
   }
   if(!data){ MODE_LINK.gagal=true; return true; }
   UJIAN_MANDIRI=data;
@@ -4304,10 +4386,30 @@ function siapkanFormLink(){
 function tampilGagalLink(){
   tampil('scSiswaLogin');
   const cat=document.getElementById('catatanPaketSiswa');
-  if(cat) cat.innerHTML='<div class="nota bahaya">❌ Soal tidak dapat dimuat. Kemungkinan link sudah tidak berlaku, atau gudang belum diatur dengan benar. Minta link baru kepada guru Anda.</div>';
+  if(cat) cat.innerHTML='<div class="nota bahaya">❌ Soal belum dapat dimuat. Jaringan mungkin sedang lambat. '+
+    'Tekan <b>Coba Lagi</b> dulu — tidak perlu men-refresh halaman. Bila tetap gagal, minta link baru kepada guru Anda.</div>';
   document.getElementById('blokPilih').classList.add('hide');
   document.getElementById('blokManual').classList.add('hide');
   document.getElementById('btnGantiCara').classList.add('hide');
+  const mulai=document.getElementById('btnMulai');
+  if(mulai && mulai.parentNode){
+    const lama=document.getElementById('btnCobaLagiLink'); if(lama) lama.remove();
+    const b=document.createElement('button');
+    b.className='btn'; b.id='btnCobaLagiLink'; b.type='button'; b.textContent='🔄 Coba Lagi';
+    b.onclick=cobaLagiLink;
+    mulai.parentNode.insertBefore(b, mulai);
+  }
+}
+/* Siswa cukup menekan Coba Lagi, tanpa perlu men-refresh halaman. */
+async function cobaLagiLink(){
+  const cat=document.getElementById('catatanPaketSiswa');
+  if(cat) cat.innerHTML='<div class="nota info">⏳ Sedang memuat ulang soal dari gudang… mohon tunggu.</div>';
+  const b=document.getElementById('btnCobaLagiLink'); if(b) b.remove();
+  MODE_LINK.gagal=false;
+  let ada=false;
+  try{ ada=await siapkanModeLink(); }catch(e){ ada=false; }
+  if(ada && !MODE_LINK.gagal){ try{ bukaUjianMandiri(); }catch(e){} return; }
+  tampilGagalLink();
 }
 
 /* --- siswa: kirim nilai otomatis ke gudang --- */
@@ -4346,6 +4448,16 @@ async function tarikHasilGudang(){
 
 /* ---------- jalankan ---------- */
 muat();
+/* Halaman siswa dari link: tampilkan keterangan "sedang memuat" lebih dulu,
+   supaya siswa tidak melihat layar kosong atau peringatan saat soal diambil. */
+if(String(location.hash||'').indexOf('#/ujian/')===0){
+  try{
+    tampil('scSiswaLogin');
+    ['blokPilih','blokManual','btnGantiCara'].forEach(x=>{ const el=document.getElementById(x); if(el) el.classList.add('hide'); });
+    const box=document.getElementById('catatanPaketSiswa');
+    if(box) box.innerHTML='<div class="nota info">⏳ Sedang memuat soal… mohon tunggu sebentar, jangan ditutup.</div>';
+  }catch(e){}
+}
 (async()=>{
   let adaLink=false;
   try{ adaLink=await siapkanModeLink(); }catch(e){ adaLink=false; }
